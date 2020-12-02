@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--    <h1>hello world{{ name }}</h1>-->
+<!--    <h1>hello world{{ adress }}</h1>-->
+<!--    {% for name in arr %}-->
+<!--        {% if name.0 == '0' %}-->
+<!--            <h1>hello master {{name}}</h1>-->
+<!--        {% elif name.0 == 'I' %}-->
+<!--             <h5>hello master {{name}}</h5>-->
+<!--        {% else %}-->
+<!--            <h2>hello {{name}}</h2>-->
+<!--        {% endif %}-->
+<!--    {% endfor %}-->
+    {% for b in books %}
+{{ Users }}
+        <h4>{{ b.title }}</h4>
+        <h4>{{ b.data }}</h4>
+        <h6>{{ b.text }}</h6>
+        <h3>{{ b.comments.count }}</h3>
+        <h3>{{ b.comments.exists }}</h3>
+        {% for comment in b.comments.all %}
+            <h4>{{comments.text}}</h4>
+            <h5>{{comments.date}}</h5>
+            <h6>{{comments.author}}</h6>
+        {% endfor %}
+        <br>
+    {% endfor %}
+</body>
+</html>
