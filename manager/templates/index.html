@@ -16,17 +16,17 @@
 <!--            <h2>hello {{name}}</h2>-->
 <!--        {% endif %}-->
 <!--    {% endfor %}-->
+{{ user }}
     {% for b in books %}
-{{ Users }}
-        <h4>{{ b.title }}</h4>
-        <h4>{{ b.data }}</h4>
-        <h6>{{ b.text }}</h6>
-        <h3>{{ b.comments.count }}</h3>
-        <h3>{{ b.comments.exists }}</h3>
+        <h1>{{ b.title }}</h1>
+        <h2>{{ b.data }}</h2>
+        <h3>{{ b.text }}</h3>
+        <h4>{{ b.authors.all }}</h4>
+       <a href="{% url 'add-like' id=b.id %}"><h4>Likes: {{ b.count }}</h4></a>
         {% for comment in b.comments.all %}
-            <h4>{{comments.text}}</h4>
-            <h5>{{comments.date}}</h5>
-            <h6>{{comments.author}}</h6>
+            <h4>{{ comment.text }}</h4>
+            <h5>{{ comment.data }}</h5>
+            <h6>{{ comment.author }}</h6>
         {% endfor %}
         <br>
     {% endfor %}
