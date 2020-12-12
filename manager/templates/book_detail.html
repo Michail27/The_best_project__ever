@@ -6,14 +6,14 @@
 <h2>{{ book.data }}</h2>
 <h3>{{ book.text }}</h3>
 <h4>{{ book.authors.all }}</h4>
-<a href="{% url 'add-like' id=book.id %}"><h4>Likes: {{ book.likes }}</h4></a>
+
 {% for i in '12345' %}
     {% if rate < i %}
-        <a href="{% url 'add-rate' id=book.id rate=i %}">
+        <a href="{% url 'add-rate-location' id=book.id rate=i location=1 %}">
             <span class="fa fa-star"></span>
         </a>
     {% else %}
-        <a href="{% url 'add-rate' id=book.id rate=i %}">
+        <a href="{% url 'add-rate-location' id=book.id rate=i location=1 %}">
             <span class="fa fa-star checked"></span>
         </a>
     {% endif %}

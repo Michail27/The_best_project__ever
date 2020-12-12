@@ -18,15 +18,16 @@
         <h2>{{ b.data }}</h2>
         <h3>{{ b.text }}</h3>
         <h4>{{ b.authors.all }}</h4>
-        <a href="{% url 'add-like' id=b.id %}"><h4>Likes: {{ b.likes }}</h4></a>
-        {% for i in "12345" %}
-            {% if rate < i %}
+
+        {{ b.rate }}
+        {% for i in range %}
+            {% if b.rate >= i %}
                 <a href="{% url 'add-rate' id=b.id rate=i %}">
-                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star checked"></span>
                 </a>
             {% else %}
                <a href="{% url 'add-rate' id=b.id rate=i %}">
-                   <span class="fa fa-star checked"></span>
+                   <span class="fa fa-star "></span>
                </a>
             {% endif %}
         {% endfor %}
