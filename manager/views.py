@@ -1,7 +1,6 @@
-from django.db.models import Count, Prefetch, Avg
+from django.db.models import Prefetch, Count
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from django.views import View
 
 from manager.models import Book, Comment, LikeCommentUser
@@ -27,6 +26,7 @@ def bui(request):
 #         context['books'] = books.annotate(count_like=Count('users_likes'))
 #         return render(request, 'index.html', context)
 
+
 class MyPage(View):
     def get(self, request):
         context = {}
@@ -34,15 +34,16 @@ class MyPage(View):
         comments = Prefetch('comments', comment_query)
         context['books'] = Book.objects.prefetch_related('authors', comments)
         context['range'] = range(1, 6)
-
         return render(request, 'index.html', context)
 
 
 class AddLikeComment(View):
-    def get(self, request, id):
+    def get(self, request, slug, id, location=None):
         if request.user.is_authenticated:
             LikeCommentUser.objects.create(user=request.user, comment_id=id)
-        return redirect("the-main-page")
+        if location is None:
+            return redirect("the-main-page")
+        return redirect("book-detail", slug=slug)
 
 
 class DelComment(View):
@@ -60,19 +61,22 @@ class DelBook(View):
 
 
 class AddRate2Book(View):
-    def get(self, request, id, rate, location=None):
+    def get(self, request, slug, id, rate, location=None):
         if request.user.is_authenticated:
             RateBookUser.objects.create(user=request.user, book_id=id, rate=rate)
         if location is None:
             return redirect('the-main-page')
-        else:
-            return redirect("book-detail", id=id)
-
+        return redirect("book-detail", slug=slug)
 
 
 class BookDetail(View):
-    def get(self, request, id):
-        comment_query = Comment.objects.annotate(count_like=Count("users_likes")).select_related("author")
+    def get(self, request, slug):
+        context = {}
+        comment_query = Comment.objects.select_related("author")
         comments = Prefetch("comments", comment_query)
-        book = Book.objects.prefetch_related('authors', comments).get(id=id)
-        return render(request, "book_detail.html", {'book': book, 'rate': 2})
+        context['book'] = Book.objects.prefetch_related('authors', comments).get(slug=slug)
+        context['range'] = range(1, 6)
+        return render(request, "book_detail.html", context)
+
+
+

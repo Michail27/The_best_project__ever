@@ -14,7 +14,7 @@
 <!--    {% endfor %}-->
 {{ user }}
     {% for b in books %}
-        <a href="{% url 'book-detail' id=b.id %}"><h1>{{ b.title }}</h1></a>
+        <a href="{% url 'book-detail' slug=b.slug %}"><h1>{{ b.title }}</h1></a>
         <h2>{{ b.data }}</h2>
         <h3>{{ b.text }}</h3>
         <h4>{{ b.authors.all }}</h4>
@@ -22,11 +22,11 @@
         {{ b.rate }}
         {% for i in range %}
             {% if b.rate >= i %}
-                <a href="{% url 'add-rate' id=b.id rate=i %}">
+                <a href="{% url 'add-rate' slug=b.slug id=b.id rate=i %}">
                     <span class="fa fa-star checked"></span>
                 </a>
             {% else %}
-               <a href="{% url 'add-rate' id=b.id rate=i %}">
+               <a href="{% url 'add-rate' slug=b.slug id=b.id rate=i %}">
                    <span class="fa fa-star "></span>
                </a>
             {% endif %}
@@ -38,7 +38,7 @@
             <h4>{{ comment.text }}</h4>
             <h5>{{ comment.data }}</h5>
             <h6>{{ comment.author }}</h6>
-            <a href="{% url 'add-like-comment' id=comment.id %}"><h4>Likes: {{ comment.likes_for_comment }}</h4></a>
+            <a href="{% url 'add-like-comment' slug=b.slug id=comment.id %}"><h4>Likes: {{ comment.likes_for_comment }}</h4></a>
             <a href="{% url 'del-comment' id=comment.id %}"><button> Удалить коментарий </button></a>
         {% endfor %}
         <br>

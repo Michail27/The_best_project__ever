@@ -6,15 +6,15 @@
 <h2>{{ book.data }}</h2>
 <h3>{{ book.text }}</h3>
 <h4>{{ book.authors.all }}</h4>
-
-{% for i in '12345' %}
-    {% if rate < i %}
-        <a href="{% url 'add-rate-location' id=book.id rate=i location=1 %}">
-            <span class="fa fa-star"></span>
+{{ book.rate }}
+{% for i in range %}
+    {% if book.rate >= i %}
+        <a href="{% url 'add-rate-location' slug=book.slug id=book.id rate=i location=1 %}">
+            <span class="fa fa-star checked"></span>
         </a>
     {% else %}
-        <a href="{% url 'add-rate-location' id=book.id rate=i location=1 %}">
-            <span class="fa fa-star checked"></span>
+        <a href="{% url 'add-rate-location' slug=book.slug id=book.id rate=i location=1 %}">
+            <span class="fa fa-star"></span>
         </a>
     {% endif %}
 {% endfor %}
@@ -25,11 +25,13 @@
     <h4>{{ comment.text }}</h4>
     <h5>{{ comment.data }}</h5>
     <h6>{{ comment.author }}</h6>
-    <a href="{% url 'add-like-comment' id=comment.id %}">
-        <h4>Likes: {{ comment.count_like }}</h4>
+    <a href="{% url 'add-like-location' slug=book.slug id=comment.id location=1 %}">
+        <h4>Likes: {{ comment.likes_for_comment }}</h4>
     </a>
     <a href="{% url 'del-comment' id=comment.id %}"><button> Удалить коментарий </button></a>
 {% endfor %}
+<p></p>
+<p><a href="{% url 'the-main-page' %}"><button>Главная страница</button></a></p>
 
 {% endblock %}
 
