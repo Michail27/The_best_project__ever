@@ -12,7 +12,8 @@ class Book(models.Model):
     title = models.CharField(
         max_length=50,
         verbose_name='название',
-        help_text='Имя книги'
+        help_text='Имя книги',
+        db_index=True
     )
     data = models.DateTimeField(auto_now_add=True, null=True)
     text = models.TextField()
@@ -21,14 +22,14 @@ class Book(models.Model):
     count_rated_users = models.PositiveIntegerField(default=0)
     count_all_stars = models.PositiveIntegerField(default=0)
     users_likes = models.ManyToManyField(User, through='manager.LikeBookUser', related_name='liked_books')
-    slug = models.SlugField(null=True, unique=True)
+    slug = models.SlugField(null=True, unique=True, db_index=True)
 
     def __str__(self):
         return f"{self.title} - {self.id:}"
 
     def save(self, **kwargs):
         if self.id is None:
-            self.slug = self.slug = slugify(self.title)
+            self.slug = slugify(self.title)
         try:
             super().save(**kwargs)
         except:
@@ -84,4 +85,14 @@ class LikeCommentUser(models.Model):
         else:
             self.comment.likes_for_comment += 1
         self.comment.save()
+
+
+class TestTale(models.Model):
+    title = models.CharField(max_length=50, primary_key=True)
+
+
+class TestComment(models.Model):
+    test = models.ForeignKey(TestTale, on_delete=models.CASCADE)
+
+
 

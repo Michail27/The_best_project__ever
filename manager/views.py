@@ -1,8 +1,11 @@
-from django.db.models import Prefetch, Count
+from django.contrib.auth import login, logout
+from django.db.models import Prefetch
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
+from django.contrib.auth.forms import AuthenticationForm
 
+from manager.forms import BookForm, CustomAuthenticationForm
 from manager.models import Book, Comment, LikeCommentUser
 from manager.models import LikeBookUser as RateBookUser
 
@@ -34,13 +37,31 @@ class MyPage(View):
         comments = Prefetch('comments', comment_query)
         context['books'] = Book.objects.prefetch_related('authors', comments)
         context['range'] = range(1, 6)
+        context['form'] = BookForm()
+
         return render(request, 'index.html', context)
 
 
+class LoginView(View):
+    def get(self, request):
+        return render(request, "login.html", {'form': CustomAuthenticationForm()})
+
+    def post(self, request):
+        user = CustomAuthenticationForm(data=request.POST)
+        if user.is_valid():
+            login(request, user.get_user())
+        return redirect('the-main-page')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('the-main-page')
+
+
 class AddLikeComment(View):
-    def get(self, request, slug, id, location=None):
+    def get(self, request, slug, comment_id, location=None):
         if request.user.is_authenticated:
-            LikeCommentUser.objects.create(user=request.user, comment_id=id)
+            LikeCommentUser.objects.create(user=request.user, comment_id=comment_id)
         if location is None:
             return redirect("the-main-page")
         return redirect("book-detail", slug=slug)
@@ -61,9 +82,9 @@ class DelBook(View):
 
 
 class AddRate2Book(View):
-    def get(self, request, slug, id, rate, location=None):
+    def get(self, request, slug, rate, location=None):
         if request.user.is_authenticated:
-            RateBookUser.objects.create(user=request.user, book_id=id, rate=rate)
+            RateBookUser.objects.create(user=request.user, book=Book.objects.get(slug=slug), rate=rate)
         if location is None:
             return redirect('the-main-page')
         return redirect("book-detail", slug=slug)
@@ -79,4 +100,19 @@ class BookDetail(View):
         return render(request, "book_detail.html", context)
 
 
+class AddBook(View):
+    def post(self, request):
+        if request.user.is_authenticated:
+            bf = BookForm(data=request.POST)
+            book = bf.save(commit=True)
+            book.authors.add(request.user)
+            book.save()
+
+            # book = Book.objects.create(
+            #     title=request.POST['title'],
+            #     text=request.POST['text'],
+            # )
+            # book.authors.add(request.user)
+            # book.save()
+        return redirect('the-main-page')
 
