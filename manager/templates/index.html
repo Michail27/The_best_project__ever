@@ -16,7 +16,7 @@
 <a href="{% url 'logout' %}">Logout</a>
 {{ user }}
     {% for b in books %}
-        <a href="{% url 'book-detail' slug=b.slug %}"><h1>{{ b.title }}</h1></a>
+        <a href="{% url 'book-detail' slug=b.slug  %}"><h1>{{ b.title }}</h1></a>
         <h2>{{ b.data }}</h2>
         <h3>{{ b.text }}</h3>
         <h4>{{ b.authors.all }}</h4>
@@ -39,21 +39,21 @@
             <button  type="button" class="btn btn-danger">Удалить книгу </button>
         </a></p>
 
-        {% for comment in b.comments.all %}
-            <h4>{{ comment.text }}</h4>
-            <h5>{{ comment.data }}</h5>
-            <h6>{{ comment.author }}</h6>
-            <a href="{% url 'add-like-comment' slug=b.slug comment_id=comment.id %}"><h4>Likes: {{ comment.likes_for_comment }}</h4></a>
-            <a href="{% url 'del-comment' id=comment.id %}">
-                <button  type="button" class="btn btn-warning"> Удалить коментарий </button></a>
-        {% endfor %}
-        <br>
+<!--        {% for comment in b.comments.all %}-->
+<!--            <h4>{{ comment.text }}</h4>-->
+<!--            <h5>{{ comment.data }}</h5>-->
+<!--            <h6>{{ comment.author }}</h6>-->
+<!--            <a href="{% url 'add-like-comment' slug=b.slug comment_id=comment.id %}"><h4>Likes: {{ comment.likes_for_comment }}</h4></a>-->
+<!--            <a href="{% url 'del-comment' id=comment.id slug=b.slug %}">-->
+<!--                <button  type="button" class="btn btn-warning"> Удалить коментарий </button></a>-->
+<!--        {% endfor %}-->
+<!--        <br>-->
     {% endfor %}
 {% if user.is_authenticated %}
 <form action="{% url 'add-book' %}" method="post">
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="OK">
+    <input type="submit" value="Добавить книгу">
 </form>
 {% endif %}
 {% endblock %}

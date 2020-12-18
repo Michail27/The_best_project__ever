@@ -30,10 +30,37 @@
     <a href="{% url 'add-like-location' slug=book.slug comment_id=comment.id location=1 %}">
         <h4>Likes: {{ comment.likes_for_comment }}</h4>
     </a>
-    <a href="{% url 'del-comment' id=comment.id %}">
+
+
+
+    <a href="{% url 'del-comment' id=comment.id slug=book.slug %}">
         <button type="button" class="btn btn-warning"> Удалить коментарий </button>
     </a>
 {% endfor %}
+
+
+{% if user.is_authenticated %}
+<form action="{% url 'add-comment' slug=book.slug %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Добавить коментарий">
+</form>
+{% endif %}
+
+
+<!--{% if user.is_authenticated %}-->
+<!--<form action="{% url 'add-comment' slug=book.slug %}" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <label for="text">text comment</label>-->
+<!--    <textarea rows="5" name="text" id="text" cols="150"></textarea>-->
+<!--    <input type="submit" value="Добавить коментарий">-->
+<!--</form>-->
+<!--{% endif %}-->
+
+
+
+
+
 <p></p>
 <p><a href="{% url 'the-main-page' %}">
     <button type="button" class="btn btn-success">Главная страница</button>

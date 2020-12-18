@@ -92,7 +92,7 @@ class TestTale(models.Model):
 
 
 class TestComment(models.Model):
-    test = models.ForeignKey(TestTale, on_delete=models.CASCADE)
+    test = models.ForeignKey(TestTale, on_delete=models.CASCADE, related_name='test_title')
 
 
 

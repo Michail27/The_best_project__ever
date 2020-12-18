@@ -1,11 +1,13 @@
 from django.contrib.auth import login, logout
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.db.models import Prefetch
 from django.http import HttpResponse
+from django.middleware.csrf import CsrfViewMiddleware
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.forms import AuthenticationForm
 
-from manager.forms import BookForm, CustomAuthenticationForm
+from manager.forms import BookForm, CustomAuthenticationForm, CommentForm
 from manager.models import Book, Comment, LikeCommentUser
 from manager.models import LikeBookUser as RateBookUser
 
@@ -68,10 +70,10 @@ class AddLikeComment(View):
 
 
 class DelComment(View):
-    def get(self, request, id):
+    def get(self, request, id, slug):
         if request.user.is_authenticated:
             Comment.objects.get(id=id).delete()
-        return redirect("the-main-page")
+        return redirect("book-detail", slug=slug)
 
 
 class DelBook(View):
@@ -84,7 +86,7 @@ class DelBook(View):
 class AddRate2Book(View):
     def get(self, request, slug, rate, location=None):
         if request.user.is_authenticated:
-            RateBookUser.objects.create(user=request.user, book=Book.objects.get(slug=slug), rate=rate)
+            RateBookUser.objects.create(user=request.user, book_id=Book.objects.get(slug=slug).id, rate=rate)
         if location is None:
             return redirect('the-main-page')
         return redirect("book-detail", slug=slug)
@@ -97,6 +99,8 @@ class BookDetail(View):
         comments = Prefetch("comments", comment_query)
         context['book'] = Book.objects.prefetch_related('authors', comments).get(slug=slug)
         context['range'] = range(1, 6)
+        context['form'] = CommentForm()
+
         return render(request, "book_detail.html", context)
 
 
@@ -116,3 +120,27 @@ class AddBook(View):
             # book.save()
         return redirect('the-main-page')
 
+
+# class AddComment2(View):
+#     def post(self, request, slug):
+#         if request.user.is_authenticated:
+#         #     book = Book.objects.get(slug=slug)
+#         #     comment = book.comments.create(
+#         #         text=request.POST['text'],
+#         #         author=request.user
+#         #     )
+#         #     comment.save()
+#         # return redirect("book-detail", slug=slug)
+#         # #
+
+
+class AddComment(View):
+    def post(self, request, slug):
+        if request.user.is_authenticated:
+            cf = CommentForm(data=request.POST)
+            comment = cf.save(commit=False)
+            comment.author = request.user
+            book_id = Book.objects.get(slug=slug).id
+            comment.book_id = book_id
+            comment.save()
+        return redirect("book-detail", slug=slug)

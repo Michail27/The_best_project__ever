@@ -1,6 +1,6 @@
 from django.forms import ModelForm, TextInput, Textarea, CharField, PasswordInput, BaseForm
 
-from manager.models import Book
+from manager.models import Book, Comment
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 
 
@@ -23,5 +23,15 @@ class BookForm(ModelForm):
         }
         help_text = {
             'title': "",
+            'text': ""
+        }
+
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {'text': Textarea(attrs={'class': 'form-control', 'rows': 5, 'cols': 50})}
+        help_text = {
             'text': ""
         }
