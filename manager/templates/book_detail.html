@@ -19,7 +19,7 @@
     {% endif %}
 {% endfor %}
         <p></p>
-        <p><a href="{% url 'del-book' id=book.id %}">
+        <p><a href="{% url 'del-book' slug=book.slug %}">
             <button  type="button" class="btn btn-danger"> Удалить книгу </button>
         </a></p>
 
