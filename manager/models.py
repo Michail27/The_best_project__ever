@@ -66,7 +66,7 @@ class Comment(models.Model):
     text = models.TextField()
     data = models.DateTimeField(auto_now_add=True)
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='comments', null=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='comments_user')
     likes_for_comment = models.PositiveIntegerField(default=0)
     users_likes = models.ManyToManyField(User, through='manager.LikeCommentUser', related_name='liked_comment')
 
@@ -87,23 +87,6 @@ class LikeCommentUser(models.Model):
         else:
             self.comment.likes_for_comment += 1
         self.comment.save()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

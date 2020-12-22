@@ -1,11 +1,8 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-
 from django.db.models import Prefetch, OuterRef, Exists
-
 from django.shortcuts import render, redirect
 from django.views import View
-
 
 from manager.forms import BookForm, CustomAuthenticationForm, CommentForm
 from manager.models import Book, Comment, LikeCommentUser
@@ -19,7 +16,7 @@ class MyPage(View):
         if request.user.is_authenticated:
             is_owner = Exists(User.objects.filter(books=OuterRef('pk'), id=request.user.id))
             books = books.annotate(is_owner=is_owner)
-        context['books'] = books.order_by('-rate', 'data')
+        context['books'] = books.order_by('data')
         context['range'] = range(1, 6)
         context['form'] = BookForm()
         return render(request, 'index.html', context)
@@ -42,19 +39,19 @@ def logout_user(request):
 
 
 class AddLikeComment(View):
-    def get(self, request, slug, comment_id, location=None):
+    def get(self, request, slug, comment_id):
         if request.user.is_authenticated:
             LikeCommentUser.objects.create(user=request.user, comment_id=comment_id)
-        if location is None:
-            return redirect("the-main-page")
         return redirect("book-detail", slug=slug)
 
 
-class DelComment(View):
-    def get(self, request, id, slug):
-        if request.user.is_authenticated:
-            Comment.objects.get(id=id).delete()
-        return redirect("book-detail", slug=slug)
+
+def comment_delete(request, comment_id, slug):
+    if request.user.is_authenticated:
+        comment = Comment.objects.get(id=comment_id)
+        if request.user == comment.author:
+            comment.delete()
+    return redirect("book-detail", slug=slug)
 
 
 def book_delete(request, slug):
@@ -62,7 +59,7 @@ def book_delete(request, slug):
         book = Book.objects.get(slug=slug)
         if request.user in book.authors.all():
             book.delete()
-            return redirect("the-main-page")
+    return redirect("the-main-page")
 
 
 class AddRate2Book(View):
@@ -77,12 +74,19 @@ class AddRate2Book(View):
 class BookDetail(View):
     def get(self, request, slug):
         context = {}
+        lku = LikeCommentUser.objects
         comment_query = Comment.objects.select_related("author")
+        if request.user.is_authenticated:
+            is_liked = Exists(User.objects.filter(liked_comment=OuterRef('pk'), id=request.user.id))
+            is_owner = Exists(User.objects.filter(comments_user=OuterRef('pk'), id=request.user.id))
+            comment_query = comment_query.annotate(is_liked=is_liked)
+            comment_query = comment_query.annotate(is_owner=is_owner)
         comments = Prefetch("comments", comment_query)
-        context['book'] = Book.objects.prefetch_related('authors', comments).get(slug=slug)
+        book = Book.objects.prefetch_related('authors', comments)
+        book = book.get(slug=slug)
+        context['book'] = book
         context['range'] = range(1, 6)
         context['form'] = CommentForm()
-
         return render(request, "book_detail.html", context)
 
 
@@ -102,7 +106,6 @@ class AddBook(View):
             # book.save()
         return redirect('the-main-page')
 
-
 # class AddComment2(View):
 #     def post(self, request, slug):
 #         if request.user.is_authenticated:
@@ -121,8 +124,7 @@ class AddComment(View):
             cf = CommentForm(data=request.POST)
             comment = cf.save(commit=False)
             comment.author = request.user
-            book_id = Book.objects.get(slug=slug).id
-            comment.book_id = book_id
+            comment.book_id = slug
             comment.save()
         return redirect("book-detail", slug=slug)
 
@@ -144,4 +146,23 @@ class BookUpdate(View):
                 if bf.is_valid():
                     bf.save(commit=True)
         return redirect('the-main-page')
+
+
+class CommentUpdate(View):
+    def get(self, request, slug, comment_id):
+        if request.user.is_authenticated:
+            comment = Comment.objects.get(id=comment_id)
+            if request.user == comment.author:
+                form = CommentForm(instance=comment)
+                return render(request, 'update_comment.html', {'form': form, 'slug': slug, 'comment_id': comment.id})
+            return redirect("book-detail", slug=slug)
+
+    def post(self, request, slug, comment_id):
+        if request.user.is_authenticated:
+            comment = Comment.objects.get(id=comment_id)
+            if request.user == comment.author:
+                cf = CommentForm(instance=comment, data=request.POST)
+                if cf.is_valid():
+                    cf.save(commit=True)
+        return redirect("book-detail", slug=slug)
 

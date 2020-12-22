@@ -18,24 +18,31 @@
         </a>
     {% endif %}
 {% endfor %}
-        <p></p>
-        <p><a href="{% url 'del-book' slug=book.slug %}">
-            <button  type="button" class="btn btn-danger"> Удалить книгу </button>
-        </a></p>
+
 
 {% for comment in book.comments.all %}
     <h4>{{ comment.text }}</h4>
+    {% if comment.is_liked %}
+        <span class="fa fa-star checked"></span>
+    {% endif %}
     <h5>{{ comment.data }}</h5>
     <h6>{{ comment.author }}</h6>
-    <a href="{% url 'add-like-location' slug=book.slug comment_id=comment.id location=1 %}">
+    <a href="{% url 'add-like-location' slug=book.slug comment_id=comment.id %}">
+
         <h4>Likes: {{ comment.likes_for_comment }}</h4>
+
     </a>
+        {% if comment.is_owner %}
+            <a href="{% url 'del-comment' slug=book.slug comment_id=comment.id %}">
+            <i><input type="button" class="btn btn-danger" value="Delete Comment"></i>
+            </a>
+            <a href="{% url 'update-comment' slug=book.slug comment_id=comment.id %}">
+            <i><input type="button" class="btn btn-light" value="Update Book"></i>
+            </a>
+        {% endif %}
 
 
 
-    <a href="{% url 'del-comment' id=comment.id slug=book.slug %}">
-        <button type="button" class="btn btn-warning"> Удалить коментарий </button>
-    </a>
 {% endfor %}
 
 

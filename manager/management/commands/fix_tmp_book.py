@@ -41,4 +41,5 @@ class Command(BaseCommand):
             tmp_book = tmp_books.get(slug=book.slug)
             for author in book.authors.all():
                 tmp_book.authors.add(author)
+            tmp_books.data = book.data
             tmp_book.save()
