@@ -14,6 +14,7 @@
 <!--    {% endfor %}-->
 <a href="{% url 'login' %}">Login</a>
 <a href="{% url 'logout' %}">Logout</a>
+<a href="{% url 'register' %}">Register</a>
 {{ user }}
     {% for b in books %}
         <a href="{% url 'book-detail' slug=b.slug  %}"><h1>{{ b.title }}</h1></a>
@@ -33,6 +34,7 @@
                </a>
             {% endif %}
         {% endfor %}
+        <h3>{{b.users_likes.all}}</h3>
         <p></p>
         {% if b.is_owner %}
             <i><input type="button" class="btn btn-light" value="Belarus Live"></i>

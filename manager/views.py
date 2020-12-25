@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models import Prefetch, OuterRef, Exists
 from django.shortcuts import render, redirect
 from django.views import View
+from django.contrib import messages
 
-from manager.forms import BookForm, CustomAuthenticationForm, CommentForm
+from manager.forms import BookForm, CustomAuthenticationForm, CommentForm, CustomUserCreationForm
 from manager.models import Book, Comment, LikeCommentUser
 from manager.models import LikeBookUser as RateBookUser
 
@@ -30,7 +31,23 @@ class LoginView(View):
         user = CustomAuthenticationForm(data=request.POST)
         if user.is_valid():
             login(request, user.get_user())
-        return redirect('the-main-page')
+            return redirect('the-main-page')
+        messages.error(request, user.error_messages)
+        return redirect('login')
+
+
+class RegisterView(View):
+    def get(self, request):
+        form = CustomUserCreationForm()
+        return render(request, 'register.html', {'form': form})
+
+    def post(self, request):
+        form = CustomUserCreationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+        messages.error(request, form.error_messages)
+        return redirect('register')
 
 
 def logout_user(request):
@@ -43,7 +60,6 @@ class AddLikeComment(View):
         if request.user.is_authenticated:
             LikeCommentUser.objects.create(user=request.user, comment_id=comment_id)
         return redirect("book-detail", slug=slug)
-
 
 
 def comment_delete(request, comment_id, slug):
@@ -74,7 +90,6 @@ class AddRate2Book(View):
 class BookDetail(View):
     def get(self, request, slug):
         context = {}
-        lku = LikeCommentUser.objects
         comment_query = Comment.objects.select_related("author")
         if request.user.is_authenticated:
             is_liked = Exists(User.objects.filter(liked_comment=OuterRef('pk'), id=request.user.id))
@@ -83,6 +98,9 @@ class BookDetail(View):
             comment_query = comment_query.annotate(is_owner=is_owner)
         comments = Prefetch("comments", comment_query)
         book = Book.objects.prefetch_related('authors', comments)
+        if request.user.is_authenticated:
+            is_owners = Exists(User.objects.filter(books=OuterRef('pk'), id=request.user.id))
+            book = book.annotate(is_owners=is_owners)
         book = book.get(slug=slug)
         context['book'] = book
         context['range'] = range(1, 6)
@@ -97,7 +115,6 @@ class AddBook(View):
             book = bf.save(commit=True)
             book.authors.add(request.user)
             book.save()
-
             # book = Book.objects.create(
             #     title=request.POST['title'],
             #     text=request.POST['text'],
@@ -135,7 +152,7 @@ class BookUpdate(View):
             book = Book.objects.get(slug=slug)
             if request.user in book.authors.all():
                 form = BookForm(instance=book)
-                return render(request, 'update_book.html', {'form': form, 'slug': book.slug})
+                return render(request, 'update_book.html', {'form': form, 'slug': slug})
         return redirect('the-main-page')
 
     def post(self, request, slug):
@@ -154,7 +171,7 @@ class CommentUpdate(View):
             comment = Comment.objects.get(id=comment_id)
             if request.user == comment.author:
                 form = CommentForm(instance=comment)
-                return render(request, 'update_comment.html', {'form': form, 'slug': slug, 'comment_id': comment.id})
+                return render(request, 'update_comment.html', {'form': form, 'slug': slug, 'comment_id': comment_id})
             return redirect("book-detail", slug=slug)
 
     def post(self, request, slug, comment_id):

@@ -1,6 +1,9 @@
 {% extends "main_template.html" %}
 
 {% block login %}
+{% for msg in messages %}
+    {{msg}}
+{% endfor %}
 <form action="{% url 'login' %}" method="post">
     {% csrf_token %}
     {{ form }}

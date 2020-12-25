@@ -18,6 +18,14 @@
         </a>
     {% endif %}
 {% endfor %}
+<p></p>
+{% if book.is_owners %}
+            <i><input type="button" class="btn btn-light" value="Belarus Live"></i>
+            <a href="{% url 'del-book' slug=book.slug %}">
+            <i><input type="button" class="btn btn-danger" value="Delete Book"></i>
+            </a>
+
+{% endif %}
 
 
 {% for comment in book.comments.all %}
@@ -27,7 +35,8 @@
     {% endif %}
     <h5>{{ comment.data }}</h5>
     <h6>{{ comment.author }}</h6>
-    <a href="{% url 'add-like-location' slug=book.slug comment_id=comment.id %}">
+    <h4>{{ comment.users_likes.all }}</h4>
+    <a href="{% url 'add-like' slug=book.slug comment_id=comment.id %}">
 
         <h4>Likes: {{ comment.likes_for_comment }}</h4>
 
