@@ -6,20 +6,22 @@ from django.views import View
 from django.contrib import messages
 
 from manager.forms import BookForm, CustomAuthenticationForm, CommentForm, CustomUserCreationForm
-from manager.models import Book, Comment, LikeCommentUser
+from manager.models import Book, Comment, LikeCommentUser, Genre
 from manager.models import LikeBookUser as RateBookUser
 
 
 class MyPage(View):
     def get(self, request):
         context = {}
-        books = Book.objects.prefetch_related('authors')
+        books = Book.objects.prefetch_related('authors', 'genre')
+        gen = Genre.objects.all()
         if request.user.is_authenticated:
             is_owner = Exists(User.objects.filter(books=OuterRef('pk'), id=request.user.id))
             books = books.annotate(is_owner=is_owner)
         context['books'] = books.order_by('data')
         context['range'] = range(1, 6)
         context['form'] = BookForm()
+        context['gen'] = gen
         return render(request, 'index.html', context)
 
 
@@ -92,6 +94,7 @@ class BookDetail(View):
         context = {}
         comment_query = Comment.objects.select_related("author")
         if request.user.is_authenticated:
+
             is_liked = Exists(User.objects.filter(liked_comment=OuterRef('pk'), id=request.user.id))
             is_owner = Exists(User.objects.filter(comments_user=OuterRef('pk'), id=request.user.id))
             comment_query = comment_query.annotate(is_liked=is_liked)
@@ -144,6 +147,22 @@ class AddComment(View):
             comment.book_id = slug
             comment.save()
         return redirect("book-detail", slug=slug)
+
+
+class PegeGenre(View):
+    def get(self, request, genre):
+        books = Book.objects.filter(genre__text=genre)
+        context = {}
+        books = books.prefetch_related('authors', 'genre')
+        gen = Genre.objects.all()
+        if request.user.is_authenticated:
+            is_owner = Exists(User.objects.filter(books=OuterRef('pk'), id=request.user.id))
+            books = books.annotate(is_owner=is_owner)
+        context['books'] = books.order_by('data')
+        context['range'] = range(1, 6)
+        context['form'] = BookForm()
+        context['gen'] = gen
+        return render(request, 'page_books_genre.html', context)
 
 
 class BookUpdate(View):

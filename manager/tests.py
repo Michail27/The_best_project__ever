@@ -1,12 +1,14 @@
+from decimal import Decimal
+
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 from slugify import slugify
 
 from manager.models import Book, Comment, LikeCommentUser
 
 
-class TestMyAppPlease(TestCase):
+class TestMyAppPlease(TransactionTestCase):
     def setUp(self):
         self.user = User.objects.create_user('test_name')
         self.user1 = User.objects.create_user('test_name1')
@@ -92,6 +94,12 @@ class TestMyAppPlease(TestCase):
         self.client.get(url)
         self.book1.refresh_from_db()
         self.assertEqual(self.book1.rate, 4)
+
+        self.client.force_login(self.user)
+        url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=5))
+        self.client.get(url)
+        self.book1.refresh_from_db()
+        self.assertEqual(self.book1.rate, Decimal('4.67'))
 
     def test_book_delete(self):
         self.client.force_login(self.user)
@@ -225,10 +233,13 @@ class TestMyAppPlease(TestCase):
         url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
         self.client.get(url)
         self.assertEqual(LikeCommentUser.objects.count(), 1)
+        url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
+        self.client.get(url)
+        self.assertEqual(LikeCommentUser.objects.count(), 0)
         self.client.logout()
         url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
         self.client.get(url)
-        self.assertEqual(LikeCommentUser.objects.count(), 1)
+        self.assertEqual(LikeCommentUser.objects.count(), 0)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
@@ -297,6 +308,15 @@ class TestMyAppPlease(TestCase):
         url = reverse('book-detail', kwargs=dict(slug=self.book1.slug))
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'book_detail.html')
+
+    def test_PegeGenre(self):
+        self.client.force_login(self.user)
+        self.book1 = Book.objects.create(title='test_title1')
+        self.book1.authors.add(self.user)
+        self.book1.save()
+        url = reverse('page-genre', kwargs=dict(genre=self.book1.genre))
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, 'page_books_genre.html')
 
 
 

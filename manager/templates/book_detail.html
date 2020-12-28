@@ -6,6 +6,8 @@
 <h2>{{ book.data }}</h2>
 <h3>{{ book.text }}</h3>
 <h4>{{ book.authors.all }}</h4>
+
+
 {{ book.rate }}
 {% for i in range %}
     {% if book.rate >= i %}
@@ -50,9 +52,10 @@
             </a>
         {% endif %}
 
-
-
 {% endfor %}
+
+
+
 
 
 {% if user.is_authenticated %}
