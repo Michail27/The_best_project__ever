@@ -94,7 +94,6 @@ class BookDetail(View):
         context = {}
         comment_query = Comment.objects.select_related("author")
         if request.user.is_authenticated:
-
             is_liked = Exists(User.objects.filter(liked_comment=OuterRef('pk'), id=request.user.id))
             is_owner = Exists(User.objects.filter(comments_user=OuterRef('pk'), id=request.user.id))
             comment_query = comment_query.annotate(is_liked=is_liked)
@@ -114,28 +113,11 @@ class BookDetail(View):
 class AddBook(View):
     def post(self, request):
         if request.user.is_authenticated:
-            bf = BookForm(data=request.POST)
+            bf = BookForm(files=request.FILES, data=request.POST)
             book = bf.save(commit=True)
             book.authors.add(request.user)
             book.save()
-            # book = Book.objects.create(
-            #     title=request.POST['title'],
-            #     text=request.POST['text'],
-            # )
-            # book.authors.add(request.user)
-            # book.save()
         return redirect('the-main-page')
-
-# class AddComment2(View):
-#     def post(self, request, slug):
-#         if request.user.is_authenticated:
-#         #     book = Book.objects.get(slug=slug)
-#         #     comment = book.comments.create(
-#         #         text=request.POST['text'],
-#         #         author=request.user
-#         #     )
-#         #     comment.save()
-#         # return redirect("book-detail", slug=slug)
 
 
 class AddComment(View):
@@ -178,7 +160,7 @@ class BookUpdate(View):
         if request.user.is_authenticated:
             book = Book.objects.get(slug=slug)
             if request.user in book.authors.all():
-                bf = BookForm(instance=book, data=request.POST)
+                bf = BookForm(files=request.FILES, data=request.POST, instance=book)
                 if bf.is_valid():
                     bf.save(commit=True)
         return redirect('the-main-page')
@@ -201,4 +183,3 @@ class CommentUpdate(View):
                 if cf.is_valid():
                     cf.save(commit=True)
         return redirect("book-detail", slug=slug)
-

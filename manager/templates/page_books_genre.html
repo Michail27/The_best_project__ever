@@ -3,7 +3,9 @@
 {% block genre %}
 
 {{ user }}<br>
-
+<p><a href="{% url 'the-main-page' %}">
+    <button type="button" class="btn btn-success">Главная страница</button>
+</a></p>
 <div class="btn-group">
     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
     Genre <span class="caret"></span></button>

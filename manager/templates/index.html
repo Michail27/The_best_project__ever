@@ -25,10 +25,10 @@
 
     {% for b in books %}
         <a href="{% url 'book-detail' slug=b.slug  %}"><h1>{{ b.title }}</h1></a>
-        <h2>{{ b.data }}</h2>
+        <h4>{{ b.data }}</h4>
         <h3>{{ b.text }}</h3>
-        <h4>{{ b.authors.all }}</h4>
-        <h1>{{ b.genre.all }}</h1>
+        <h4>Authors:{{ b.authors.all }}</h4>
+        <h4>Genre:{{ b.genre.all }}</h4>
 
         {{ b.rate }}
         {% for i in range %}
@@ -42,7 +42,7 @@
                </a>
             {% endif %}
         {% endfor %}
-        <h3>{{b.users_likes.all}}</h3>
+        <h5>Rate:{{b.users_likes.all}}</h5>
         <p></p>
         {% if b.is_owner %}
             <i><input type="button" class="btn btn-light" value="Belarus Live"></i>
@@ -56,7 +56,7 @@
         {% endif %}
     {% endfor %}
 {% if user.is_authenticated %}
-<form action="{% url 'add-book' %}" method="post">
+<form action="{% url 'add-book' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Добавить книгу">

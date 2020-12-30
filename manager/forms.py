@@ -1,6 +1,6 @@
-from django.forms import ModelForm, TextInput, Textarea, CharField, PasswordInput, ModelMultipleChoiceField
+from django.forms import ModelForm, TextInput, Textarea, CharField, PasswordInput, Select, SelectMultiple
 
-from manager.models import Book, Comment, Genre
+from manager.models import Book, Comment
 from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm
 
 
@@ -34,10 +34,11 @@ class CustomAuthenticationForm(AuthenticationForm):
 class BookForm(ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'text', 'genre']
+        fields = ['title', 'text', 'genre', 'book_image']
         widgets = {
             'title': TextInput(attrs={'class': 'form-control'}),
             'text': Textarea(attrs={'class': 'form-control', 'rows': 5, 'cols': 50}),
+            'genre': SelectMultiple(attrs={'class': 'form-control'})
 
         }
         help_text = {
@@ -54,11 +55,3 @@ class CommentForm(ModelForm):
         help_text = {
             'text': ""
         }
-
-#
-# class GenreForm(ModelForm):
-#     class Meta:
-#         model = Genre
-#         fields = ['text']
-#         widgets = {'text': Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 50})}
-#         help_text = {'text': '' }

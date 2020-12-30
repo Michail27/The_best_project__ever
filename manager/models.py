@@ -11,7 +11,6 @@ class Genre(models.Model):
 
 
 class Book(models.Model):
-
     class Meta:
         verbose_name = 'Книга'
         verbose_name_plural = 'Книги'
@@ -30,6 +29,7 @@ class Book(models.Model):
     count_all_stars = models.PositiveIntegerField(default=0)
     users_likes = models.ManyToManyField(User, through='manager.LikeBookUser', related_name='liked_books')
     slug = models.SlugField(primary_key=True)
+    book_image = models.ImageField(null=True, blank=True, upload_to='images/')
     genre = models.ManyToManyField(Genre, related_name='genre_book', null=True, blank=True)
     # uuid = models.UUIDField()
 
@@ -95,8 +95,3 @@ class LikeCommentUser(models.Model):
         else:
             self.comment.likes_for_comment += 1
         self.comment.save()
-
-
-
-
-

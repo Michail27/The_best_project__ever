@@ -2,11 +2,16 @@
 
 
 {% block detail %}
-<h1>{{ book.title }}</h1>
-<h2>{{ book.data }}</h2>
-<h3>{{ book.text }}</h3>
-<h4>{{ book.authors.all }}</h4>
 
+<p><a href="{% url 'the-main-page' %}">
+    <button type="button" class="btn btn-success">Главная страница</button>
+</a></p>
+<h1>{{ book.title }}</h1>
+<h5>{{ book.data }}</h5>
+<img src="{{ book.book_image.url }}">
+<h3>{{ book.text }}</h3>
+<h4>Genre:{{ book.genre.all }}</h4>
+<h4>Authors:{{ book.authors.all }}</h4>
 
 {{ book.rate }}
 {% for i in range %}
@@ -20,15 +25,14 @@
         </a>
     {% endif %}
 {% endfor %}
+
 <p></p>
 {% if book.is_owners %}
             <i><input type="button" class="btn btn-light" value="Belarus Live"></i>
             <a href="{% url 'del-book' slug=book.slug %}">
             <i><input type="button" class="btn btn-danger" value="Delete Book"></i>
             </a>
-
 {% endif %}
-
 
 {% for comment in book.comments.all %}
     <h4>{{ comment.text }}</h4>
@@ -37,11 +41,9 @@
     {% endif %}
     <h5>{{ comment.data }}</h5>
     <h6>{{ comment.author }}</h6>
-    <h4>{{ comment.users_likes.all }}</h4>
+    <h4>Like:{{ comment.users_likes.all }}</h4>
     <a href="{% url 'add-like' slug=book.slug comment_id=comment.id %}">
-
         <h4>Likes: {{ comment.likes_for_comment }}</h4>
-
     </a>
         {% if comment.is_owner %}
             <a href="{% url 'del-comment' slug=book.slug comment_id=comment.id %}">
@@ -51,12 +53,7 @@
             <i><input type="button" class="btn btn-light" value="Update Book"></i>
             </a>
         {% endif %}
-
 {% endfor %}
-
-
-
-
 
 {% if user.is_authenticated %}
 <form action="{% url 'add-comment' slug=book.slug %}" method="post">
@@ -65,26 +62,4 @@
     <input type="submit" value="Добавить коментарий">
 </form>
 {% endif %}
-
-
-<!--{% if user.is_authenticated %}-->
-<!--<form action="{% url 'add-comment' slug=book.slug %}" method="post">-->
-<!--    {% csrf_token %}-->
-<!--    <label for="text">text comment</label>-->
-<!--    <textarea rows="5" name="text" id="text" cols="150"></textarea>-->
-<!--    <input type="submit" value="Добавить коментарий">-->
-<!--</form>-->
-<!--{% endif %}-->
-
-
-
-
-
-<p></p>
-<p><a href="{% url 'the-main-page' %}">
-    <button type="button" class="btn btn-success">Главная страница</button>
-</a></p>
-
 {% endblock %}
-
-

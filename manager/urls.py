@@ -1,11 +1,10 @@
 from django.urls import path
 
 from manager.views import MyPage, AddLikeComment, AddRate2Book, BookDetail, AddBook, comment_delete
+
 from manager.views import LoginView, logout_user, AddComment, book_delete, BookUpdate, CommentUpdate, RegisterView
 from manager.views import PegeGenre
 urlpatterns =[
-
-
     path('add_like_comment/<int:comment_id>/<str:slug>/', AddLikeComment.as_view(), name="add-like"),
     path('add_rate_to_book/<str:slug>/<int:rate>/', AddRate2Book.as_view(), name='add-rate'),
     path('add_rate_to_book/<str:slug>/<int:rate>/<str:location>/',
@@ -22,7 +21,6 @@ urlpatterns =[
     path('page_genre/<str:genre>/', PegeGenre.as_view(), name="page-genre"),
     path('book_view_detail/<str:slug>/', BookDetail.as_view(), name="book-detail"),
     path('', MyPage.as_view(), name='the-main-page')
-
 
 ]
 
