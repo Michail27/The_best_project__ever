@@ -1,9 +1,9 @@
 from django.urls import path
-
+from django.views.decorators.cache import cache_page
 from manager.views import MyPage, AddLikeComment, AddRate2Book, BookDetail, AddBook, comment_delete
 
 from manager.views import LoginView, logout_user, AddComment, book_delete, BookUpdate, CommentUpdate, RegisterView
-from manager.views import PegeGenre
+from manager.views import PegeGenre, GitButton
 urlpatterns =[
     path('add_like_comment/<int:comment_id>/<str:slug>/', AddLikeComment.as_view(), name="add-like"),
     path('add_rate_to_book/<str:slug>/<int:rate>/', AddRate2Book.as_view(), name='add-rate'),
@@ -19,7 +19,9 @@ urlpatterns =[
     path('update_book/<str:slug>/', BookUpdate.as_view(), name="update-book"),
     path('del_book/<str:slug>/', book_delete, name="del-book"),
     path('page_genre/<str:genre>/', PegeGenre.as_view(), name="page-genre"),
-    path('book_view_detail/<str:slug>/', BookDetail.as_view(), name="book-detail"),
+    path('book_view_detail/<str:slug>/', cache_page(10)(BookDetail.as_view()), name="book-detail"),
+    path('main_page/<int:page_number>/', cache_page(10)(MyPage.as_view()), name='main-page'),
+    path('git/', GitButton.as_view(), name='git-button'),
     path('', MyPage.as_view(), name='the-main-page')
 
 ]

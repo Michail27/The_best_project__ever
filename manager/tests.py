@@ -5,7 +5,7 @@ from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 from slugify import slugify
 
-from manager.models import Book, Comment, LikeCommentUser
+from manager.models import Book, Comment, LikeCommentUser, Genre
 
 
 class TestMyAppPlease(TransactionTestCase):
@@ -332,6 +332,12 @@ class TestMyAppPlease(TransactionTestCase):
         url = reverse('book-detail', kwargs=dict(slug=self.book1.slug))
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'book_detail.html')
+
+    def test_Genre(self):
+        self.client.force_login(self.user)
+        self.genre = Genre.objects.create(text="fantastic")
+        self.assertEqual(self.genre.__str__(), 'fantastic')
+
 
 
 

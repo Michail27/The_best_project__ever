@@ -8,6 +8,9 @@
 {{ user }}<br>
 
 
+<p><a href="{% url 'git-button' %}">
+    <button type="button" class="btn btn-success">Git</button>
+</a></p>
 
 <div class="btn-group">
     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -27,8 +30,8 @@
         <a href="{% url 'book-detail' slug=b.slug  %}"><h1>{{ b.title }}</h1></a>
         <h4>{{ b.data }}</h4>
         <h3>{{ b.text }}</h3>
-        <h4>Authors:{{ b.authors.all }}</h4>
-        <h4>Genre:{{ b.genre.all }}</h4>
+        <h4>Authors: {{  b.authors.all|join:", " }}</h4>
+        <h4>Genre: {{  b.genre.all|join:", "}}</h4>
 
         {{ b.rate }}
         {% for i in range %}
@@ -42,7 +45,7 @@
                </a>
             {% endif %}
         {% endfor %}
-        <h5>Rate:{{b.users_likes.all}}</h5>
+        <h5>Rate: {{ b.users_likes.all|join:", "  }}</h5>
         <p></p>
         {% if b.is_owner %}
             <i><input type="button" class="btn btn-light" value="Belarus Live"></i>
@@ -52,7 +55,6 @@
             <a href="{% url 'update-book' slug=b.slug %}">
             <i><input type="button" class="btn btn-light" value="Update Book"></i>
             </a>
-
         {% endif %}
     {% endfor %}
 {% if user.is_authenticated %}
@@ -62,4 +64,24 @@
     <input type="submit" value="Добавить книгу">
 </form>
 {% endif %}
+
+<div class="row">
+    <div class="large-3 large-offset-5 colums">
+        <ul class="pagination">
+            {% if books.has_previous %}
+                <li class="arrow"><a href="{% url 'main-page' page_number=books.previous_page_number %}">&laquo;</a></li>
+            {% endif %}
+            {% for page in books.paginator.page_range %}
+                {% if page == books.number %}
+                    <li><a href="{% url 'main-page' page %}">{{page}}</a></li>
+                {% else%}
+                    <li><a href="{% url 'main-page' page %}">{{page}}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if books.has_next %}
+                <li class="arrow"><a href="{% url 'main-page' page_number=books.next_page_number %}">&raquo;</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
 {% endblock %}

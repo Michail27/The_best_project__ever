@@ -20,8 +20,8 @@
         <a href="{% url 'book-detail' slug=b.slug  %}"><h1>{{ b.title }}</h1></a>
         <h2>{{ b.data }}</h2>
         <h3>{{ b.text }}</h3>
-        <h4>Authors: {{ b.authors.all }}</h4>
-        <h3>Genres: {{ b.genre.all }}</h3>
+        <h4>Authors: {{ b.authors.all|join:', ' }}</h4>
+        <h3>Genres: {{ b.genre.all|join:', ' }}</h3>
 
         <p></p>
         {% if b.is_owner %}

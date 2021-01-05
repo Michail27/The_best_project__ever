@@ -8,10 +8,12 @@
 </a></p>
 <h1>{{ book.title }}</h1>
 <h5>{{ book.data }}</h5>
+{% if book.book_image %}
 <img src="{{ book.book_image.url }}">
+{% endif %}
 <h3>{{ book.text }}</h3>
-<h4>Genre:{{ book.genre.all }}</h4>
-<h4>Authors:{{ book.authors.all }}</h4>
+<h4>Genre:{{ book.genre.all|join:", " }}</h4>
+<h4>Authors:{{ book.authors.all|join:", " }}</h4>
 
 {{ book.rate }}
 {% for i in range %}
@@ -41,7 +43,7 @@
     {% endif %}
     <h5>{{ comment.data }}</h5>
     <h6>{{ comment.author }}</h6>
-    <h4>Like:{{ comment.users_likes.all }}</h4>
+    <h4>Like: {{ comment.users_likes.all|join:", " }}</h4>
     <a href="{% url 'add-like' slug=book.slug comment_id=comment.id %}">
         <h4>Likes: {{ comment.likes_for_comment }}</h4>
     </a>
@@ -50,7 +52,7 @@
             <i><input type="button" class="btn btn-danger" value="Delete Comment"></i>
             </a>
             <a href="{% url 'update-comment' slug=book.slug comment_id=comment.id %}">
-            <i><input type="button" class="btn btn-light" value="Update Book"></i>
+            <i><input type="button" class="btn btn-light" value="Update Comment"></i>
             </a>
         {% endif %}
 {% endfor %}
