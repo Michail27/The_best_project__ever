@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Titles</title>
@@ -12,28 +13,13 @@
 
 </head>
 <body>
-<div class="container">
-    {% block main %}
-    {% endblock %}
+<p><a href="https://github.com/login/oauth/authorize?client_id=50a1d637027e17b59c16">
+    <button type="button" class="btn btn-success">Git</button>
+</a></p>
 
-    {% block detail %}
-    {% endblock %}
 
-    {% block login %}
-    {% endblock %}
+{{response}}
 
-    {% block update_book %}
-    {% endblock %}
 
-    {% block update_comment %}
-    {% endblock %}
-
-    {% block register %}
-    {% endblock %}
-
-    {% block genre %}
-    {% endblock %}
-
-</div>
 </body>
 </html>

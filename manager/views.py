@@ -1,5 +1,9 @@
+import webbrowser
+
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
+from django.contrib.sites import requests
+from django.core.paginator import Paginator
 from django.db.models import Prefetch, OuterRef, Exists
 from django.shortcuts import render, redirect
 from django.views import View
@@ -9,16 +13,19 @@ from manager.forms import BookForm, CustomAuthenticationForm, CommentForm, Custo
 from manager.models import Book, Comment, LikeCommentUser, Genre
 from manager.models import LikeBookUser as RateBookUser
 
+from django.views.decorators.cache import cache_page
+
 
 class MyPage(View):
-    def get(self, request):
+    def get(self, request, page_number=1):
         context = {}
         books = Book.objects.prefetch_related('authors', 'genre')
         gen = Genre.objects.all()
         if request.user.is_authenticated:
             is_owner = Exists(User.objects.filter(books=OuterRef('pk'), id=request.user.id))
             books = books.annotate(is_owner=is_owner)
-        context['books'] = books.order_by('data')
+        books = Paginator(books, 10)
+        context['books'] = books.page(page_number)
         context['range'] = range(1, 6)
         context['form'] = BookForm()
         context['gen'] = gen
@@ -183,3 +190,4 @@ class CommentUpdate(View):
                 if cf.is_valid():
                     cf.save(commit=True)
         return redirect("book-detail", slug=slug)
+

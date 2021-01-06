@@ -8,9 +8,7 @@
 {{ user }}<br>
 
 
-<p><a href="{% url 'git-button' %}">
-    <button type="button" class="btn btn-success">Git</button>
-</a></p>
+
 
 <div class="btn-group">
     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -23,8 +21,6 @@
 
     </ul>
   </div>
-
-
 
     {% for b in books %}
         <a href="{% url 'book-detail' slug=b.slug  %}"><h1>{{ b.title }}</h1></a>

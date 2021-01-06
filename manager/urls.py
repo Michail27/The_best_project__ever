@@ -3,7 +3,7 @@ from django.views.decorators.cache import cache_page
 from manager.views import MyPage, AddLikeComment, AddRate2Book, BookDetail, AddBook, comment_delete
 
 from manager.views import LoginView, logout_user, AddComment, book_delete, BookUpdate, CommentUpdate, RegisterView
-from manager.views import PegeGenre, GitButton
+from manager.views import PegeGenre
 urlpatterns =[
     path('add_like_comment/<int:comment_id>/<str:slug>/', AddLikeComment.as_view(), name="add-like"),
     path('add_rate_to_book/<str:slug>/<int:rate>/', AddRate2Book.as_view(), name='add-rate'),
@@ -21,8 +21,8 @@ urlpatterns =[
     path('page_genre/<str:genre>/', PegeGenre.as_view(), name="page-genre"),
     path('book_view_detail/<str:slug>/', cache_page(10)(BookDetail.as_view()), name="book-detail"),
     path('main_page/<int:page_number>/', cache_page(10)(MyPage.as_view()), name='main-page'),
-    path('git/', GitButton.as_view(), name='git-button'),
-    path('', MyPage.as_view(), name='the-main-page')
+    # path('git/', GitButton.as_view(), name='git-button'),
+    path('', cache_page(10)(MyPage.as_view()), name='the-main-page')
 
 ]
 
