@@ -1,10 +1,10 @@
 {% extends 'main_template.html' %}
 
 {% block main %}
-
 <a href="{% url 'login' %}">Login</a>
 <a href="{% url 'logout' %}">Logout</a>
 <a href="{% url 'register' %}">Register</a>
+<a href="{% url 'profil' %}">ProfilUser</a>
 {{ user }}<br>
 
 
@@ -65,17 +65,10 @@
     <div class="large-3 large-offset-5 colums">
         <ul class="pagination">
             {% if books.has_previous %}
-                <li class="arrow"><a href="{% url 'main-page' page_number=books.previous_page_number %}">&laquo;</a></li>
+                <li class="arrow"><a href="{% url 'the-main-page' %}?page={{books.previous_page_number }}">&laquo;</a></li>
             {% endif %}
-            {% for page in books.paginator.page_range %}
-                {% if page == books.number %}
-                    <li><a href="{% url 'main-page' page %}">{{page}}</a></li>
-                {% else%}
-                    <li><a href="{% url 'main-page' page %}">{{page}}</a></li>
-                {% endif %}
-            {% endfor %}
             {% if books.has_next %}
-                <li class="arrow"><a href="{% url 'main-page' page_number=books.next_page_number %}">&raquo;</a></li>
+                <li class="arrow"><a href="{% url 'the-main-page' %}?page={{books.next_page_number }}">&raquo;</a></li>
             {% endif %}
         </ul>
     </div>

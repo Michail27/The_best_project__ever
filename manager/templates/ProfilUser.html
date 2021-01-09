@@ -1,0 +1,16 @@
+{% extends 'main_template.html' %}
+
+{% block profilUser %}
+
+<p><a href="{% url 'the-main-page' %}">
+    <button type="button" class="btn btn-success">Главная страница</button>
+</a></p>
+
+<h1>{{user}}</h1>
+<h1>{{ user.bio }}</h1>
+<h5>{{ user.location }}</h5>
+<h3>Список прочитонных книг:</h3>
+{% for u in user.rid_table.all %}
+        <li>{{ u.book }}</li>
+{% endfor %}
+{% endblock %}

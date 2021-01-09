@@ -25,7 +25,7 @@ SECRET_KEY = '-p1s9t@^$+wvnm@)f_1egrfa$ktc4cz!s82@djuikrz#qg3t0m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -86,8 +86,8 @@ DATABASES = {
         'NAME': os.environ.get("POSTGRES_DB"),
         'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
         'USER': os.environ.get("POSTGRES_USER"),
-        'PORT': '5432',
-        'HOST' : 'db',
+        'PORT': 5432,
+        'HOST': 'db',
     }
 }
 
@@ -155,3 +155,20 @@ CACHES = {
         "LOCATION": "redis://cache://127.0.0.1:6379/1"
     }
 }
+
+# Celery Configuration Options
+
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_BROKER_URL = 'redis://cache:6379'
+CELERY_RESULT_BACKEND = 'redis://cache:6379'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+# CELERY_BEAT_SCHEDULE = {
+#     "task_one": {
+#         "task": "manager.tasks.just_taks",
+#         "schedule": 3.0,
+#     },
+# }

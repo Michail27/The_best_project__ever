@@ -10,22 +10,22 @@ from django.views import View
 from django.contrib import messages
 
 from manager.forms import BookForm, CustomAuthenticationForm, CommentForm, CustomUserCreationForm
-from manager.models import Book, Comment, LikeCommentUser, Genre
+from manager.models import Book, Comment, LikeCommentUser, Genre, RidBookUser
 from manager.models import LikeBookUser as RateBookUser
 
 from django.views.decorators.cache import cache_page
 
 
 class MyPage(View):
-    def get(self, request, page_number=1):
+    def get(self, request):
         context = {}
         books = Book.objects.prefetch_related('authors', 'genre')
         gen = Genre.objects.all()
         if request.user.is_authenticated:
             is_owner = Exists(User.objects.filter(books=OuterRef('pk'), id=request.user.id))
             books = books.annotate(is_owner=is_owner)
-        books = Paginator(books, 10)
-        context['books'] = books.page(page_number)
+        paginator = Paginator(books.order_by('data'), 5)
+        context['books'] = paginator.get_page(request.GET.get('page', 1))
         context['range'] = range(1, 6)
         context['form'] = BookForm()
         context['gen'] = gen
@@ -99,6 +99,7 @@ class AddRate2Book(View):
 class BookDetail(View):
     def get(self, request, slug):
         context = {}
+        RidBookUser.objects.create(user=request.user, book_id=slug)
         comment_query = Comment.objects.select_related("author")
         if request.user.is_authenticated:
             is_liked = Exists(User.objects.filter(liked_comment=OuterRef('pk'), id=request.user.id))
@@ -190,4 +191,17 @@ class CommentUpdate(View):
                 if cf.is_valid():
                     cf.save(commit=True)
         return redirect("book-detail", slug=slug)
+
+
+class ProfilUser(View):
+    def get(self, request):
+        context = {}
+        context['book'] = RidBookUser.objects.filter(user=request.user.id)
+        return render(request,"ProfilUser.html", context)
+
+
+def views_404(request):
+    return render(request, '404.html')
+
+
 
