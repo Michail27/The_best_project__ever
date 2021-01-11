@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '-p1s9t@^$+wvnm@)f_1egrfa$ktc4cz!s82@djuikrz#qg3t0m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -59,7 +59,7 @@ ROOT_URLCONF = 'book_shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,6 +71,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'book_shop.wsgi.application'
 
@@ -165,6 +167,8 @@ CELERY_BROKER_URL = 'redis://cache:6379'
 CELERY_RESULT_BACKEND = 'redis://cache:6379'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+
 
 # CELERY_BEAT_SCHEDULE = {
 #     "task_one": {

@@ -1,16 +1,21 @@
 {% extends 'main_template.html' %}
 
 {% block profilUser %}
+<h1>Добро пожаловать в личный кабинет</h1>
+<a href="https://github.com/login/oauth/authorize?client_id=50a1d637027e17b59c16">Авторизовацца через Git</a>
+<p><a href="{% url 'the-main-page' %}">Вернутся на главную страницу</a></p>
 
-<p><a href="{% url 'the-main-page' %}">
-    <button type="button" class="btn btn-success">Главная страница</button>
-</a></p>
-
-<h1>{{user}}</h1>
+<h1>Имя Пользователя: {{user}}</h1>
 <h1>{{ user.bio }}</h1>
 <h5>{{ user.location }}</h5>
 <h3>Список прочитонных книг:</h3>
 {% for u in user.rid_table.all %}
         <li>{{ u.book }}</li>
 {% endfor %}
+
+<h3>Список репозиториев из Githaba:</h3>
+{% for i in data %}
+    <li>{{ i }}</li>
+{% endfor %}
+
 {% endblock %}

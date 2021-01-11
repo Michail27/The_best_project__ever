@@ -1,6 +1,8 @@
 from django.conf.urls import handler404
 from django.urls import path
 from django.views.decorators.cache import cache_page
+
+from manager.oauth_viev import aouch_viev
 from manager.views import MyPage, AddLikeComment, AddRate2Book, BookDetail, AddBook, comment_delete, ProfilUser
 from manager.views import LoginView, logout_user, AddComment, book_delete, BookUpdate, CommentUpdate, RegisterView
 from manager.views import PegeGenre
@@ -25,6 +27,7 @@ urlpatterns =[
     path('page_genre/<str:genre>/', PegeGenre.as_view(), name="page-genre"),
     path('profil_user/', ProfilUser.as_view(), name='profil'),
     path('book_view_detail/<str:slug>/', cache_page(10)(BookDetail.as_view()), name="book-detail"),
+    path('callback_aouch/', aouch_viev, name='callback-aouch'),
     path('', MyPage.as_view(), name='the-main-page')
 
 ]
