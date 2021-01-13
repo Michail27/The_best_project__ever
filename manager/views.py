@@ -10,7 +10,7 @@ from django.views import View
 from django.contrib import messages
 
 from manager.forms import BookForm, CustomAuthenticationForm, CommentForm, CustomUserCreationForm
-from manager.models import Book, Comment, LikeCommentUser, Genre, RidBookUser, Repozitor
+from manager.models import Book, Comment, LikeCommentUser, Genre, RidBookUser, Repozitors
 from manager.models import LikeBookUser as RateBookUser
 
 
@@ -194,7 +194,7 @@ class CommentUpdate(View):
 class ProfilUser(View):
     def get(self, request):
         context = {}
-        r = Repozitor.objects.filter(user=request.user.id).all()
+        r = Repozitors.objects.filter(user=request.user.id).all()
         rep = r.all()
         context['book'] = RidBookUser.objects.filter(user=request.user.id)
         context['repoz'] = r

@@ -170,9 +170,9 @@ CELERY_TASK_SERIALIZER = 'json'
 
 
 
-# CELERY_BEAT_SCHEDULE = {
-#     "task_one": {
-#         "task": "manager.tasks.just_taks",
-#         "schedule": 3.0,
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    "task_one": {
+        "task": "manager.tasks.update_repozitor",
+        "schedule": 60 * 45,
+    },
+}

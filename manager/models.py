@@ -126,22 +126,9 @@ class LikeCommentUser(models.Model):
         self.comment.save()
 
 
-class Repozitor(models.Model):
+class Repozitors(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='repos_user')
     text = models.TextField()
+    git_login = models.TextField()
 
-
-# class Repozitory(models.Model):
-#     class Meta:
-#         unique_together = ['user']
-#
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rep_user')
-#     text = models.TextField()
-#
-#     def save(self, **kwargs):
-#         try:
-#             super().save(**kwargs)
-#         except:
-#             Repozitory.objects.get(user=self.user, text=self.text).delete()
-#             super().save(**kwargs)
