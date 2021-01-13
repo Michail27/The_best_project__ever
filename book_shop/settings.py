@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'manager',
-    'Aouth',
     'debug_toolbar'
 
 ]
@@ -173,6 +172,6 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULE = {
     "task_one": {
         "task": "manager.tasks.update_repozitor",
-        "schedule": 60 * 45,
+        "schedule": 60 * 40,
     },
 }

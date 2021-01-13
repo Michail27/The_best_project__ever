@@ -67,9 +67,6 @@ class Book(models.Model):
 
 
 class RidBookUser(models.Model):
-    class Meta:
-        unique_together = ('user', 'book')
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rid_table')
     book: Book = models.ForeignKey(
         Book, on_delete=models.CASCADE, related_name='rid_user_table', null=True)

@@ -97,7 +97,11 @@ class AddRate2Book(View):
 class BookDetail(View):
     def get(self, request, slug):
         context = {}
-        RidBookUser.objects.create(user=request.user, book_id=slug)
+        list_rid = RidBookUser.objects.filter(user=request.user.id, book_id=slug)
+        if list_rid:
+            pass
+        else:
+            RidBookUser.objects.create(user=request.user, book_id=slug)
         comment_query = Comment.objects.select_related("author")
         if request.user.is_authenticated:
             is_liked = Exists(User.objects.filter(liked_comment=OuterRef('pk'), id=request.user.id))
@@ -195,7 +199,6 @@ class ProfilUser(View):
     def get(self, request):
         context = {}
         r = Repozitors.objects.filter(user=request.user.id).all()
-        rep = r.all()
         context['book'] = RidBookUser.objects.filter(user=request.user.id)
         context['repoz'] = r
         return render(request,"ProfilUser.html", context)

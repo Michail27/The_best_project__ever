@@ -25,7 +25,7 @@ urlpatterns =[
     path('del_book/<str:slug>/', book_delete, name="del-book"),
     path('page_genre/<str:genre>/', PegeGenre.as_view(), name="page-genre"),
     path('profil_user/', ProfilUser.as_view(), name='profil'),
-    path('book_view_detail/<str:slug>/', cache_page(10)(BookDetail.as_view()), name="book-detail"),
+    path('book_view_detail/<str:slug>/', BookDetail.as_view(), name="book-detail"),
     path('callback_aouch/', aouch_viev, name='callback-aouch'),
     path('', MyPage.as_view(), name='the-main-page')
 
