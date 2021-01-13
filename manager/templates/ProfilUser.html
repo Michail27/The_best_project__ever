@@ -14,8 +14,10 @@
 {% endfor %}
 
 <h3>Список репозиториев из Githaba:</h3>
-{% for i in data %}
-    <li>{{ i }}</li>
-{% endfor %}
+{% if repoz %}
+    {% for i in repoz %}
+        <li>{{ i.text }}</li>
+    {% endfor %}
+{% endif %}
 
 {% endblock %}

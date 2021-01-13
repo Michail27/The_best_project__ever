@@ -1,7 +1,7 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+
+from django.shortcuts import render, redirect
 from requests import post, get
-# from book_shop.settings import GIT_CLIENT_ID, GIT_CLIENT_SICRET
+from manager.models import Repozitor
 
 GIT_CLIENT_ID = '50a1d637027e17b59c16'
 GIT_CLIENT_SICRET = 'e577b2760e4e77b27f396b975d8a9a3d36384e1a'
@@ -17,4 +17,9 @@ def aouch_viev(request):
     login = json_response['login']
     req = get(f"https://api.github.com/users/{login}/repos")
     repos = [i['name'] for i in req.json()]
-    return render(request, 'ProfilUser.html', {'data': repos})
+    list_rep = Repozitor.objects.filter(user=request.user.id)
+    if list_rep:
+        Repozitor.objects.update(user=request.user, text=repos)
+    else:
+        Repozitor.objects.create(user=request.user, text=repos)
+    return redirect('profil')

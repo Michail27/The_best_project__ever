@@ -124,3 +124,24 @@ class LikeCommentUser(models.Model):
         else:
             self.comment.likes_for_comment += 1
         self.comment.save()
+
+
+class Repozitor(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='repos_user')
+    text = models.TextField()
+
+
+# class Repozitory(models.Model):
+#     class Meta:
+#         unique_together = ['user']
+#
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rep_user')
+#     text = models.TextField()
+#
+#     def save(self, **kwargs):
+#         try:
+#             super().save(**kwargs)
+#         except:
+#             Repozitory.objects.get(user=self.user, text=self.text).delete()
+#             super().save(**kwargs)

@@ -2,7 +2,7 @@ import webbrowser
 
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-from django.contrib.sites import requests
+
 from django.core.paginator import Paginator
 from django.db.models import Prefetch, OuterRef, Exists
 from django.shortcuts import render, redirect
@@ -10,10 +10,8 @@ from django.views import View
 from django.contrib import messages
 
 from manager.forms import BookForm, CustomAuthenticationForm, CommentForm, CustomUserCreationForm
-from manager.models import Book, Comment, LikeCommentUser, Genre, RidBookUser
+from manager.models import Book, Comment, LikeCommentUser, Genre, RidBookUser, Repozitor
 from manager.models import LikeBookUser as RateBookUser
-
-from django.views.decorators.cache import cache_page
 
 
 class MyPage(View):
@@ -196,12 +194,12 @@ class CommentUpdate(View):
 class ProfilUser(View):
     def get(self, request):
         context = {}
+        r = Repozitor.objects.filter(user=request.user.id).all()
+        rep = r.all()
         context['book'] = RidBookUser.objects.filter(user=request.user.id)
+        context['repoz'] = r
         return render(request,"ProfilUser.html", context)
 
-
-def views_404(request):
-    return render(request, '404.html')
 
 
 

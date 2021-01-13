@@ -1,14 +1,13 @@
-from django.conf.urls import handler404
+
 from django.urls import path
 from django.views.decorators.cache import cache_page
-
 from manager.oauth_viev import aouch_viev
 from manager.views import MyPage, AddLikeComment, AddRate2Book, BookDetail, AddBook, comment_delete, ProfilUser
 from manager.views import LoginView, logout_user, AddComment, book_delete, BookUpdate, CommentUpdate, RegisterView
 from manager.views import PegeGenre
 
 
-# handler404 = 'manager.views.views_404'
+
 
 urlpatterns =[
     path('add_like_comment/<int:comment_id>/<str:slug>/', AddLikeComment.as_view(), name="add-like"),
@@ -31,7 +30,3 @@ urlpatterns =[
     path('', MyPage.as_view(), name='the-main-page')
 
 ]
-
-#
-# path('main_page/<int:page_number>/', cache_page(10)(MyPage.as_view()), name='main-page'),
-# path('git/', GitButton.as_view(), name='git-button'),
