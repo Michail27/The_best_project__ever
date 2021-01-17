@@ -198,9 +198,10 @@ class CommentUpdate(View):
 class ProfilUser(View):
     def get(self, request):
         context = {}
-        r = Repozitors.objects.filter(user=request.user.id).all()
+        if Repozitors.objects.filter(user=request.user.id).all():
+            r = Repozitors.objects.filter(user=request.user.id).all()[0]._github_repos
+            context['repoz'] = r
         context['book'] = RidBookUser.objects.filter(user=request.user.id)
-        context['repoz'] = r
         return render(request,"ProfilUser.html", context)
 
 

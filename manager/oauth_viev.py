@@ -1,7 +1,7 @@
 
 from django.shortcuts import render, redirect
 from requests import post, get
-from manager.models import Repozitors as Repozitor
+from manager.models import Repozitors
 
 GIT_CLIENT_ID = '50a1d637027e17b59c16'
 GIT_CLIENT_SICRET = 'e577b2760e4e77b27f396b975d8a9a3d36384e1a'
@@ -17,9 +17,13 @@ def aouch_viev(request):
     login = json_response['login']
     req = get(f"https://api.github.com/users/{login}/repos")
     repos = [i['name'] for i in req.json()]
-    list_rep = Repozitor.objects.filter(user=request.user.id)
-    if list_rep:
-        Repozitor.objects.update(user=request.user, text=repos, git_login=login)
-    else:
-        Repozitor.objects.create(user=request.user, text=repos, git_login=login)
-    return redirect('profil')
+    if request.user.is_authenticated:
+        r = Repozitors.objects.filter(user=request.user.id).all()
+        if r:
+            pass
+        else:
+            repozitors = Repozitors(user=request.user, github_account=login)
+            repozitors.github_repos = repos
+            repozitors.save()
+        return render(request, 'ProfilUser.html', {'repoz': r[0].github_repos})
+    return render(request, 'ProfilUser.html')

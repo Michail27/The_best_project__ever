@@ -1,6 +1,5 @@
 
 from django.urls import path
-from django.views.decorators.cache import cache_page
 from manager.oauth_viev import aouch_viev
 from manager.views import MyPage, AddLikeComment, AddRate2Book, BookDetail, AddBook, comment_delete, ProfilUser
 from manager.views import LoginView, logout_user, AddComment, book_delete, BookUpdate, CommentUpdate, RegisterView
