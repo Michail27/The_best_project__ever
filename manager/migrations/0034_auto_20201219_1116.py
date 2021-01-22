@@ -5,7 +5,7 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
+    atomic = False
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('manager', '0033_auto_20201219_1022'),
