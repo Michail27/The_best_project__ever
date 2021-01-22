@@ -135,106 +135,106 @@ class TestMyAppPlease(TransactionTestCase):
         self.client.get(url)
         self.assertEqual(Book.objects.count(), 1)
 
-    def test_add_comment(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
-        data = {
-             'text': 'test text'
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302, msg='is not redirect')
-        self.assertTrue(Comment.objects.exists(), msg='Comment is not created')
-        comment = Comment.objects.first()
-        self.assertEqual(comment.text, data['text'])
-        self.assertEqual(comment.book, self.book1, msg='comment bellong to Book')
-        self.assertEqual(comment.author, self.user, msg='Not the Usser')
-        self.client.logout()
-        data = {
-            'text': 'test text1'
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302, msg='is not redirect')
-        self.assertEqual(Comment.objects.count(), 1, msg='created comment without author')
-        self.client.force_login(self.user1)
-        data = {
-            'text': 'test_text2'
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302, 'is not register')
-        self.assertEqual(Comment.objects.count(), 2, msg='Comment is not Created')
-
-    def test_comment_delete(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
-        data = {
-            'text': 'test text'
-        }
-        self.client.post(url, data)
-        self.assertTrue(Comment.objects.exists(), msg='Not create comment')
-        self.assertEqual(Comment.objects.count(), 1)
-        comment1 = Comment.objects.first()
-        self.assertEqual(comment1.author, self.user, msg='Not the Usser')
-        self.book2 = Book.objects.create(title='test_title2')
-        url = reverse('add-comment', kwargs=dict(slug=self.book2.slug))
-        data = {
-            'text': 'test text2'
-        }
-        self.client.post(url, data)
-        comment2 = Comment.objects.last()
-        self.assertEqual(Comment.objects.count(), 2)
-        url = reverse('del-comment', kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
-        self.client.get(url)
-        self.assertEqual(Comment.objects.count(), 1)
-        self.client.logout()
-        url = reverse('del-comment', kwargs=dict(slug=self.book2.slug, comment_id=comment2.id))
-        self.client.get(url)
-        self.assertEqual(Comment.objects.count(), 1)
-        self.client.force_login(self.user1)
-        url = reverse('del-comment', kwargs=dict(slug=self.book2.slug, comment_id=comment2.id))
-        self.client.get(url)
-        self.assertEqual(Comment.objects.count(), 1)
-
-    def test_update_comment(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
-        data = {
-            'text': 'test text'
-        }
-        self.client.post(url, data)
-        comment1 = Comment.objects.first()
-        self.book2 = Book.objects.create(title='test_title2')
-        url = reverse('add-comment', kwargs=dict(slug=self.book2.slug))
-        data = {
-            'text': 'test text2'
-        }
-        self.client.post(url, data)
-        comment2 = Comment.objects.last()
-        data = {
-             'text': 'test_text1_update'
-        }
-        url = reverse('update-comment', kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302)
-        comment1.refresh_from_db()
-        self.assertEqual(comment1.text, data['text'], msg='comment1 is not refreshed')
-        self.assertEqual(comment1.author, self.user)
-        self.client.logout()
-        url = reverse('update-comment', kwargs=dict(slug=self.book2.slug, comment_id=comment2.id))
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302)
-        comment1.refresh_from_db()
-        self.assertNotEqual(comment2.text, data['text'], msg='comment1 is not refreshed')
-        self.assertEqual(comment1.author, self.user)
-        self.client.force_login(self.user1)
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302)
-        comment1.refresh_from_db()
-        self.assertNotEqual(comment2.text, data['text'], msg='comment1 is not refreshed')
+    # def test_add_comment(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
+    #     data = {
+    #          'text': 'test text'
+    #     }
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302, msg='is not redirect')
+    #     self.assertTrue(Comment.objects.exists(), msg='Comment is not created')
+    #     comment = Comment.objects.first()
+    #     self.assertEqual(comment.text, data['text'])
+    #     self.assertEqual(comment.book, self.book1, msg='comment bellong to Book')
+    #     self.assertEqual(comment.author, self.user, msg='Not the Usser')
+    #     self.client.logout()
+    #     data = {
+    #         'text': 'test text1'
+    #     }
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302, msg='is not redirect')
+    #     self.assertEqual(Comment.objects.count(), 1, msg='created comment without author')
+    #     self.client.force_login(self.user1)
+    #     data = {
+    #         'text': 'test_text2'
+    #     }
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302, 'is not register')
+    #     self.assertEqual(Comment.objects.count(), 2, msg='Comment is not Created')
+    #
+    # def test_comment_delete(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
+    #     data = {
+    #         'text': 'test text'
+    #     }
+    #     self.client.post(url, data)
+    #     self.assertTrue(Comment.objects.exists(), msg='Not create comment')
+    #     self.assertEqual(Comment.objects.count(), 1)
+    #     comment1 = Comment.objects.first()
+    #     self.assertEqual(comment1.author, self.user, msg='Not the Usser')
+    #     self.book2 = Book.objects.create(title='test_title2')
+    #     url = reverse('add-comment', kwargs=dict(slug=self.book2.slug))
+    #     data = {
+    #         'text': 'test text2'
+    #     }
+    #     self.client.post(url, data)
+    #     comment2 = Comment.objects.last()
+    #     self.assertEqual(Comment.objects.count(), 2)
+    #     url = reverse('del-comment', kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
+    #     self.client.get(url)
+    #     self.assertEqual(Comment.objects.count(), 1)
+    #     self.client.logout()
+    #     url = reverse('del-comment', kwargs=dict(slug=self.book2.slug, comment_id=comment2.id))
+    #     self.client.get(url)
+    #     self.assertEqual(Comment.objects.count(), 1)
+    #     self.client.force_login(self.user1)
+    #     url = reverse('del-comment', kwargs=dict(slug=self.book2.slug, comment_id=comment2.id))
+    #     self.client.get(url)
+    #     self.assertEqual(Comment.objects.count(), 1)
+    #
+    # def test_update_comment(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
+    #     data = {
+    #         'text': 'test text'
+    #     }
+    #     self.client.post(url, data)
+    #     comment1 = Comment.objects.first()
+    #     self.book2 = Book.objects.create(title='test_title2')
+    #     url = reverse('add-comment', kwargs=dict(slug=self.book2.slug))
+    #     data = {
+    #         'text': 'test text2'
+    #     }
+    #     self.client.post(url, data)
+    #     comment2 = Comment.objects.last()
+    #     data = {
+    #          'text': 'test_text1_update'
+    #     }
+    #     url = reverse('update-comment', kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302)
+    #     comment1.refresh_from_db()
+    #     self.assertEqual(comment1.text, data['text'], msg='comment1 is not refreshed')
+    #     self.assertEqual(comment1.author, self.user)
+    #     self.client.logout()
+    #     url = reverse('update-comment', kwargs=dict(slug=self.book2.slug, comment_id=comment2.id))
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302)
+    #     comment1.refresh_from_db()
+    #     self.assertNotEqual(comment2.text, data['text'], msg='comment1 is not refreshed')
+    #     self.assertEqual(comment1.author, self.user)
+    #     self.client.force_login(self.user1)
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302)
+    #     comment1.refresh_from_db()
+    #     self.assertNotEqual(comment2.text, data['text'], msg='comment1 is not refreshed')
 
     def test_add_like_comment(self):
         self.client.force_login(self.user)

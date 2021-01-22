@@ -18,12 +18,13 @@ def aouch_viev(request):
     req = get(f"https://api.github.com/users/{login}/repos")
     repos = [i['name'] for i in req.json()]
     if request.user.is_authenticated:
-        r = Repozitors.objects.filter(user=request.user.id).all()
+        r = Repozitors.objects.filter(user=request.user.id)
         if r:
             pass
         else:
             repozitors = Repozitors(user=request.user, github_account=login)
             repozitors.github_repos = repos
             repozitors.save()
+            r = Repozitors.objects.filter(user=request.user.id)
         return render(request, 'ProfilUser.html', {'repoz': r[0].github_repos})
     return render(request, 'ProfilUser.html')
