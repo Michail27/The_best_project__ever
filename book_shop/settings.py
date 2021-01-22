@@ -92,7 +92,10 @@ DATABASES = {
         'HOST': 'db',
     }
 }
-
+import sys
+if 'test' in sys.argv or 'test_coverage' in sys.argv: #Covers regular testing and django-coverage
+    DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
+    DATABASES['default']['NAME'] = ':memory:'
 
 # DATABASES = {
 #     'default': {
