@@ -39,58 +39,58 @@ class TestMyAppPlease(TransactionTestCase):
     #     self.assertEqual(response.status_code, 302, msg='is not redirect')
     #     self.assertEqual(Book.objects.count(), 1,  msg='created book without author')
 
-    def test_except_slug(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        self.book1.authors.add(self.user)
-        self.book1.save()
-        data = {
-            'title': 'test-title2',
-            'text': 'test-text'
-        }
-        url = reverse('update-book', kwargs=dict(slug=self.book1.slug))
-        response = self.client.post(url, data)
-        self.book1.refresh_from_db()
-        self.assertEqual(self.book1.title, data['title'], msg='book1 is not refreshed')
-        self.assertEqual(self.book1.text, data['text'], msg='book1 is not refreshed')
-        self.book2 = Book.objects.create(title='test_title1')
-        self.assertNotEqual(self.book2.slug, 'test_title1')
+    # def test_except_slug(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     self.book1.authors.add(self.user)
+    #     self.book1.save()
+    #     data = {
+    #         'title': 'test-title2',
+    #         'text': 'test-text'
+    #     }
+    #     url = reverse('update-book', kwargs=dict(slug=self.book1.slug))
+    #     response = self.client.post(url, data)
+    #     self.book1.refresh_from_db()
+    #     self.assertEqual(self.book1.title, data['title'], msg='book1 is not refreshed')
+    #     self.assertEqual(self.book1.text, data['text'], msg='book1 is not refreshed')
+    #     self.book2 = Book.objects.create(title='test_title1')
+    #     self.assertNotEqual(self.book2.slug, 'test_title1')
 
-    def test_update_book(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        self.book1.authors.add(self.user)
-        self.book1.save()
-        self.book2 = Book.objects.create(title='test_title2')
-        self.book2.authors.add(self.user)
-        self.book2.save()
-        self.assertEqual(Book.objects.count(), 2)
-        data = {
-            'title': 'test title',
-            'text': 'test text'
-        }
-        url = reverse('update-book', kwargs=dict(slug=self.book1.slug))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302)
-        self.book1.refresh_from_db()
-        self.assertEqual(self.book1.title, data['title'], msg='book1 is not refreshed')
-        self.assertEqual(self.book1.text, data['text'], msg='book1 is not refreshed')
-        self.assertEqual(self.book1.authors.first(), self.user)
-        self.client.logout()
-        url = reverse('update-book', kwargs=dict(slug=self.book2.slug))
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302)
-        self.book2.refresh_from_db()
-        self.assertNotEqual(self.book2.title, data['title'])
-        self.assertNotEqual(self.book2.text, data['text'])
-        self.client.logout()
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302)
-        self.book2.refresh_from_db()
-        self.assertNotEqual(self.book2.title, data['title'])
-        self.assertNotEqual(self.book2.text, data['text'])
+    # def test_update_book(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     self.book1.authors.add(self.user)
+    #     self.book1.save()
+    #     self.book2 = Book.objects.create(title='test_title2')
+    #     self.book2.authors.add(self.user)
+    #     self.book2.save()
+    #     self.assertEqual(Book.objects.count(), 2)
+    #     data = {
+    #         'title': 'test title',
+    #         'text': 'test text'
+    #     }
+    #     url = reverse('update-book', kwargs=dict(slug=self.book1.slug))
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302)
+    #     self.book1.refresh_from_db()
+    #     self.assertEqual(self.book1.title, data['title'], msg='book1 is not refreshed')
+    #     self.assertEqual(self.book1.text, data['text'], msg='book1 is not refreshed')
+    #     self.assertEqual(self.book1.authors.first(), self.user)
+    #     self.client.logout()
+    #     url = reverse('update-book', kwargs=dict(slug=self.book2.slug))
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302)
+    #     self.book2.refresh_from_db()
+    #     self.assertNotEqual(self.book2.title, data['title'])
+    #     self.assertNotEqual(self.book2.text, data['text'])
+    #     self.client.logout()
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302)
+    #     self.book2.refresh_from_db()
+    #     self.assertNotEqual(self.book2.title, data['title'])
+    #     self.assertNotEqual(self.book2.text, data['text'])
 
     # def test_rate_book(self):
     #     self.client.force_login(self.user)
@@ -118,22 +118,22 @@ class TestMyAppPlease(TransactionTestCase):
     #     self.book1.refresh_from_db()
     #     self.assertEqual(self.book1.rate, Decimal('4.67'))
 
-    def test_book_delete(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        self.book1.authors.add(self.user)
-        self.book1.save()
-        self.book2 = Book.objects.create(title='test_title2')
-        self.assertEqual(Book.objects.count(), 2)
-        url = reverse('del-book', kwargs=dict(slug=self.book1.slug))
-        self.client.get(url)
-        self.assertEqual(Book.objects.count(), 1)
-        url = reverse('del-book', kwargs=dict(slug=self.book2.slug))
-        self.client.get(url)
-        self.assertEqual(Book.objects.count(), 1)
-        self.client.logout()
-        self.client.get(url)
-        self.assertEqual(Book.objects.count(), 1)
+    # def test_book_delete(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     self.book1.authors.add(self.user)
+    #     self.book1.save()
+    #     self.book2 = Book.objects.create(title='test_title2')
+    #     self.assertEqual(Book.objects.count(), 2)
+    #     url = reverse('del-book', kwargs=dict(slug=self.book1.slug))
+    #     self.client.get(url)
+    #     self.assertEqual(Book.objects.count(), 1)
+    #     url = reverse('del-book', kwargs=dict(slug=self.book2.slug))
+    #     self.client.get(url)
+    #     self.assertEqual(Book.objects.count(), 1)
+    #     self.client.logout()
+    #     self.client.get(url)
+    #     self.assertEqual(Book.objects.count(), 1)
 
     # def test_add_comment(self):
     #     self.client.force_login(self.user)
@@ -309,34 +309,34 @@ class TestMyAppPlease(TransactionTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(User.objects.exists())
 
-    def test_my_page(self):
-        self.client.force_login(self.user)
-        url = reverse('the-main-page')
-        response = self.client.get(url)
-        self.assertTemplateUsed(response, 'index.html')
-
-    def test_PegeGenre(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        self.book1.authors.add(self.user)
-        self.book1.save()
-        url = reverse('page-genre', kwargs=dict(genre=self.book1.genre))
-        response = self.client.get(url)
-        self.assertTemplateUsed(response, 'page_books_genre.html')
-
-    def test_BookDetail(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1', book_image='image')
-        self.book1.authors.add(self.user)
-        self.book1.save()
-        url = reverse('book-detail', kwargs=dict(slug=self.book1.slug))
-        response = self.client.get(url)
-        self.assertTemplateUsed(response, 'book_detail.html')
-
-    def test_Genre(self):
-        self.client.force_login(self.user)
-        self.genre = Genre.objects.create(text="fantastic")
-        self.assertEqual(self.genre.__str__(), 'fantastic')
+    # def test_my_page(self):
+    #     self.client.force_login(self.user)
+    #     url = reverse('the-main-page')
+    #     response = self.client.get(url)
+    #     self.assertTemplateUsed(response, 'index.html')
+    #
+    # def test_PegeGenre(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     self.book1.authors.add(self.user)
+    #     self.book1.save()
+    #     url = reverse('page-genre', kwargs=dict(genre=self.book1.genre))
+    #     response = self.client.get(url)
+    #     self.assertTemplateUsed(response, 'page_books_genre.html')
+    #
+    # def test_BookDetail(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1', book_image='image')
+    #     self.book1.authors.add(self.user)
+    #     self.book1.save()
+    #     url = reverse('book-detail', kwargs=dict(slug=self.book1.slug))
+    #     response = self.client.get(url)
+    #     self.assertTemplateUsed(response, 'book_detail.html')
+    #
+    # def test_Genre(self):
+    #     self.client.force_login(self.user)
+    #     self.genre = Genre.objects.create(text="fantastic")
+    #     self.assertEqual(self.genre.__str__(), 'fantastic')
 
 
 
