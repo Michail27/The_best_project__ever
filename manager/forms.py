@@ -3,6 +3,7 @@ from django.forms import ModelForm, TextInput, Textarea, CharField, PasswordInpu
 from manager.models import Book, Comment
 from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm
 
+from captcha.fields import CaptchaField
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -32,6 +33,7 @@ class CustomAuthenticationForm(AuthenticationForm):
 
 
 class BookForm(ModelForm):
+    captcha = CaptchaField(label='Are you an human? ')
     class Meta:
         model = Book
         fields = ['title', 'text', 'genre', 'book_image']
@@ -48,10 +50,11 @@ class BookForm(ModelForm):
 
 
 class CommentForm(ModelForm):
+    captcha = CaptchaField(label='Are you an human? ')
     class Meta:
         model = Comment
         fields = ['text']
-        widgets = {'text': Textarea(attrs={'class': 'form-control', 'rows': 5, 'cols': 50})}
+        widgets = {'text': Textarea(attrs={'id': 'comment-text', 'class': 'form-control', 'rows': 5, 'cols': 50})}
         help_text = {
             'text': ""
         }

@@ -1,6 +1,7 @@
 {% extends 'main_template.html' %}
 
 {% block main %}
+{% load static %}
 <a href="{% url 'login' %}">Login</a>
 <a href="{% url 'logout' %}">Logout</a>
 <a href="{% url 'register' %}">Register</a>
@@ -23,35 +24,38 @@
   </div>
 
     {% for b in books %}
+
+        <div id="block-book {{ b.slug }}">
         <a href="{% url 'book-detail' slug=b.slug  %}"><h1>{{ b.title }}</h1></a>
         <h4>{{ b.data }}</h4>
         <h3>{{ b.text }}</h3>
         <h4>Authors: {{  b.authors.all|join:", " }}</h4>
         <h4>Genre: {{  b.genre.all|join:", "}}</h4>
-
-        {{ b.rate }}
+        <h4 id="book_rate{{ b.slug }}">Rate: {{ b.rate }}</h4>
         {% for i in range %}
+
+        <a class="add-book-rate" id="add_book_rate_{{ b.slug }}_{{ i }}">
             {% if b.rate >= i %}
-                <a href="{% url 'add-rate' slug=b.slug rate=i %}">
-                    <span class="fa fa-star checked"></span>
-                </a>
+                    <span class="rate fa fa-star checked" id="book{{ b.slug }}-{{ i }}"></span>
             {% else %}
-               <a href="{% url 'add-rate' slug=b.slug rate=i %}">
-                   <span class="fa fa-star "></span>
-               </a>
+                    <span class="rate fa fa-star" id="book{{ b.slug }}-{{ i }}"></span>
+        </a>
             {% endif %}
         {% endfor %}
         <h5>Rate: {{ b.users_likes.all|join:", "  }}</h5>
         <p></p>
+
         {% if b.is_owner %}
-            <i><input type="button" class="btn btn-light" value="Belarus Live"></i>
-            <a href="{% url 'del-book' slug=b.slug %}">
-            <i><input type="button" class="btn btn-danger" value="Delete Book"></i>
-            </a>
+<!--            <i><input type="button" class="btn btn-light" value="Belarus Live"></i>-->
+<!--            <a href="{% url 'del-book' slug=b.slug %}">-->
+<!--            <i><input type="button" class="btn btn-danger" value="Delete Book"></i>-->
+<!--            </a>-->
+            <h4 class="delete-book" id="delete_book_{{ b.slug }}">Delete Book</h4>
             <a href="{% url 'update-book' slug=b.slug %}">
-            <i><input type="button" class="btn btn-light" value="Update Book"></i>
+            <i><input type="button" class="btn btn-info" value="Update Book"></i>
             </a>
         {% endif %}
+    </div>
     {% endfor %}
 {% if user.is_authenticated %}
 <form action="{% url 'add-book' %}" method="post" enctype="multipart/form-data">
@@ -73,4 +77,5 @@
         </ul>
     </div>
 </div>
+<script src="{% static 'scripts.js' %}"></script>
 {% endblock %}

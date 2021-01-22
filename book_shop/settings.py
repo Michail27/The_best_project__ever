@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'manager',
-    'debug_toolbar'
-
+    # 'debug_toolbar',
+    'rest_framework',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'book_shop.urls'
@@ -139,13 +140,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+# ]
 
 import socket
 ip = socket.gethostbyname(socket.gethostname())
-INTERNAL_IPS += [ip[:-1] + '1']
+# INTERNAL_IPS += [ip[:-1] + '1']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -175,3 +176,10 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 60 * 40,
     },
 }
+
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
+CAPTCHA_IMAGE_SIZE = (150, 50)
+CAPTCHA_FONT_SIZE = (28)
+CAPTCHA_BACKGROUND_COLOR = '#cccccc'
+CAPTCHA_FOREGROUND_COLOR = '#001100'
+CAPTCHA_LENGTH = 6
