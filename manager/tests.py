@@ -14,30 +14,30 @@ class TestMyAppPlease(TransactionTestCase):
         self.user1 = User.objects.create_user('test_name1')
         self.user2 = User.objects.create_user('test_name2')
 
-    def test_add_book(self):
-        self.client.force_login(self.user)
-        url = reverse('add-book')
-        data = {
-            'title': 'test title',
-            'text': 'test text'
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302, msg='is not redirect')
-        self.assertTrue(Book.objects.exists(), msg='book is not created')
-        book = Book.objects.first()
-        self.assertEqual(book.title, data['title'])
-        self.assertEqual(book.text, data['text'])
-        self.assertEqual(book.slug, slugify(data['title']))
-        self.assertEqual(book.__str__(), 'test title - test-title')
-        self.assertEqual(book.authors.first(), self.user)
-        self.client.logout()
-        data = {
-            'title': 'test title',
-            'text': 'test text'
-        }
-        response = self.client.post(url, data)
-        self.assertEqual(response.status_code, 302, msg='is not redirect')
-        self.assertEqual(Book.objects.count(), 1,  msg='created book without author')
+    # def test_add_book(self):
+    #     self.client.force_login(self.user)
+    #     url = reverse('add-book')
+    #     data = {
+    #         'title': 'test title',
+    #         'text': 'test text'
+    #     }
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302, msg='is not redirect')
+    #     self.assertTrue(Book.objects.exists(), msg='book is not created')
+    #     book = Book.objects.first()
+    #     self.assertEqual(book.title, data['title'])
+    #     self.assertEqual(book.text, data['text'])
+    #     self.assertEqual(book.slug, slugify(data['title']))
+    #     self.assertEqual(book.__str__(), 'test title - test-title')
+    #     self.assertEqual(book.authors.first(), self.user)
+    #     self.client.logout()
+    #     data = {
+    #         'title': 'test title',
+    #         'text': 'test text'
+    #     }
+    #     response = self.client.post(url, data)
+    #     self.assertEqual(response.status_code, 302, msg='is not redirect')
+    #     self.assertEqual(Book.objects.count(), 1,  msg='created book without author')
 
     def test_except_slug(self):
         self.client.force_login(self.user)
@@ -92,31 +92,31 @@ class TestMyAppPlease(TransactionTestCase):
         self.assertNotEqual(self.book2.title, data['title'])
         self.assertNotEqual(self.book2.text, data['text'])
 
-    def test_rate_book(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=3))
-        self.client.get(url)
-        self.book1.refresh_from_db()
-        self.assertEqual(self.book1.rate, 3)
-        # new user
-        self.client.force_login(self.user1)
-        url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=4))
-        self.client.get(url)
-        self.book1.refresh_from_db()
-        self.assertEqual(self.book1.rate, 3.5)
-        # next user
-        self.client.force_login(self.user2)
-        url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=5))
-        self.client.get(url)
-        self.book1.refresh_from_db()
-        self.assertEqual(self.book1.rate, 4)
-
-        self.client.force_login(self.user)
-        url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=5))
-        self.client.get(url)
-        self.book1.refresh_from_db()
-        self.assertEqual(self.book1.rate, Decimal('4.67'))
+    # def test_rate_book(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=3))
+    #     self.client.get(url)
+    #     self.book1.refresh_from_db()
+    #     self.assertEqual(self.book1.rate, 3)
+    #     # new user
+    #     self.client.force_login(self.user1)
+    #     url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=4))
+    #     self.client.get(url)
+    #     self.book1.refresh_from_db()
+    #     self.assertEqual(self.book1.rate, 3.5)
+    #     # next user
+    #     self.client.force_login(self.user2)
+    #     url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=5))
+    #     self.client.get(url)
+    #     self.book1.refresh_from_db()
+    #     self.assertEqual(self.book1.rate, 4)
+    #
+    #     self.client.force_login(self.user)
+    #     url = reverse('add-rate', kwargs=dict(slug=self.book1.slug, rate=5))
+    #     self.client.get(url)
+    #     self.book1.refresh_from_db()
+    #     self.assertEqual(self.book1.rate, Decimal('4.67'))
 
     def test_book_delete(self):
         self.client.force_login(self.user)
@@ -236,27 +236,27 @@ class TestMyAppPlease(TransactionTestCase):
     #     comment1.refresh_from_db()
     #     self.assertNotEqual(comment2.text, data['text'], msg='comment1 is not refreshed')
 
-    def test_add_like_comment(self):
-        self.client.force_login(self.user)
-        self.book1 = Book.objects.create(title='test_title1')
-        url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
-        data = {
-            'text': 'test text'
-        }
-        self.client.post(url, data)
-        comment1 = Comment.objects.first()
-        url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
-        self.client.get(url)
-        self.assertEqual(LikeCommentUser.objects.count(), 1)
-        url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
-        self.client.get(url)
-        self.assertEqual(LikeCommentUser.objects.count(), 0)
-        self.client.logout()
-        url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
-        self.client.get(url)
-        self.assertEqual(LikeCommentUser.objects.count(), 0)
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+    # def test_add_like_comment(self):
+    #     self.client.force_login(self.user)
+    #     self.book1 = Book.objects.create(title='test_title1')
+    #     url = reverse('add-comment', kwargs=dict(slug=self.book1.slug))
+    #     data = {
+    #         'text': 'test text'
+    #     }
+    #     self.client.post(url, data)
+    #     comment1 = Comment.objects.first()
+    #     url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
+    #     self.client.get(url)
+    #     self.assertEqual(LikeCommentUser.objects.count(), 1)
+    #     url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
+    #     self.client.get(url)
+    #     self.assertEqual(LikeCommentUser.objects.count(), 0)
+    #     self.client.logout()
+    #     url = reverse("add-like", kwargs=dict(slug=self.book1.slug, comment_id=comment1.id))
+    #     self.client.get(url)
+    #     self.assertEqual(LikeCommentUser.objects.count(), 0)
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 302)
 
     def test_login(self):
         url = reverse('login')
