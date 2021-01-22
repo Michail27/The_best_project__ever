@@ -13,3 +13,4 @@ pillow==8.0.0
 celery==5.0.5
 djangorestframework==3.12.2
 django-simple-captcha
+coverage==5.3.1
