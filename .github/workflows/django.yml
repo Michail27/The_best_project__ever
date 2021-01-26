@@ -41,7 +41,6 @@ jobs:
       env:
         TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
         TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-        
     - name: Deploy to google server
       uses: appleboy/ssh-action@master
       with:
