@@ -35,11 +35,13 @@ $('document').ready(function(){
     });
 
     $('.like-comment').on('click', function(){
-        var id=$(this).attr('id');
+        let id=$(this).attr('id');
+        let current_id = id.split('-')[1];
+        console.log(current_id  )
         $.ajax({
-            url: "/shop/add_like2comment_ajax",
-            data: {"comment_id": id.split('-')[1]},
-            method: "GET",
+            url: `/shop/add_like2comment_ajax/${ current_id }`,
+            headers: { "X-CSRFToken": csrftoken},
+            method: "PUT",
             success: function(data) {
                 $(`#${id}`).html(`Likes: ${data['likes']}`);
             }
@@ -68,10 +70,11 @@ $('document').ready(function(){
     });
      $('.delete-comment').on('click', function(){
         var id=$(this).attr('id');
+        let comment_id = id.split('-')[2];
         $.ajax({
-            url: "/shop/delete_comment_ajax",
-            data: {"comment_id": id.split('-')[2]},
-            method: "GET",
+            url: `/shop/delete_comment_ajax/${comment_id}`,
+            headers: { "X-CSRFToken": csrftoken},
+            method: "DELETE",
             success: function(data) {
                 $(`#${id}`).remove();
             }

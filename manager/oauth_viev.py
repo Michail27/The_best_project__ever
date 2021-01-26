@@ -6,6 +6,7 @@ from manager.models import Repozitors
 GIT_CLIENT_ID = '50a1d637027e17b59c16'
 GIT_CLIENT_SICRET = 'e577b2760e4e77b27f396b975d8a9a3d36384e1a'
 
+
 def aouch_viev(request):
     code = request.GET.get('code')
     url = f'https://github.com/login/oauth/access_token?client_id={GIT_CLIENT_ID}&client_secret={GIT_CLIENT_SICRET}&code={code}'
